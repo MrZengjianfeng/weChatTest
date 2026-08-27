@@ -15,6 +15,17 @@ Component({
   },
   data: {
     current: 0,
+    // 少于 2 张时 autoplay/circular 仍会空转，必须关掉
+    canAutoplay: false,
+  },
+  observers: {
+    list(list) {
+      const count = (list && list.length) || 0
+      this.setData({
+        canAutoplay: count > 1,
+        current: 0,
+      })
+    },
   },
   methods: {
     onChange(e) {

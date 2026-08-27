@@ -3,5 +3,5 @@
  * TOKEN 仅作登录态标记，不要存密码或其它敏感明文。
  */
 export const STORAGE_KEYS = {
-  TOKEN: 'auth_token',
-}
+  TOKEN: "auth_token",
+};

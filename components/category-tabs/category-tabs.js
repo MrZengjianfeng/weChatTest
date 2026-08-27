@@ -3,7 +3,7 @@
  * 高亮由页面 activeId 决定；横向滑动交给 scroll-view，组件不维护滚动位置。
  *
  * properties:
- * - list 项 { id, name, icon }
+ * - list 项 { id, name, icon }  icon 为图片地址，空则不展示
  * - activeId 当前选中 id
  * 事件 change：{ id }
  */
@@ -18,7 +18,7 @@ Component({
   },
   methods: {
     onTapItem(e) {
-      const id = e.currentTarget.dataset.id
+      const id = String(e.currentTarget.dataset.id || '')
       if (!id || id === this.properties.activeId) return
       this.triggerEvent('change', { id })
     },

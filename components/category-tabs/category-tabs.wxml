@@ -13,7 +13,12 @@
       data-id="{{item.id}}"
       bind:tap="onTapItem"
     >
-      <text wx:if="{{item.icon}}" class="category__emoji">{{item.icon}}</text>
+      <image
+        wx:if="{{item.icon}}"
+        class="category__icon"
+        src="{{item.icon}}"
+        mode="aspectFit"
+      />
       <text>{{item.name}}</text>
     </view>
   </scroll-view>

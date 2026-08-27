@@ -1,41 +1,93 @@
 /**
  * 统一请求封装。页面和组件禁止直接 wx.request。
- * baseURL 按小程序 envVersion 切换，不要在业务代码里写死环境开关。
+ * 成功时返回业务 data；HTTP 或业务 code 失败都走 reject。
  */
-const { miniProgram } = wx.getAccountInfoSync()
-const envVersion = miniProgram.envVersion
+import { BASE_URL } from "../config/env";
+import { DEVICE_HEADERS } from "../config/headers";
+import { STORAGE_KEYS } from "../config/storage";
 
-const BASE_URL_MAP = {
-  develop: 'https://dev.example.com',
-  trial: 'https://trial.example.com',
-  release: 'https://api.example.com',
+const TIMEOUT = 10000;
+const SUCCESS_CODE = 200;
+const UNAUTH_CODES = [401];
+
+function buildHeader(extra = {}) {
+  const header = {
+    "content-type": "application/json",
+    ...extra,
+    ...DEVICE_HEADERS,
+  };
+  const token = wx.getStorageSync(STORAGE_KEYS.TOKEN);
+  if (token && !header.Authorization) {
+    header.Authorization = `Bearer ${token}`;
+  }
+  return header;
 }
 
-const BASE_URL = BASE_URL_MAP[envVersion] || BASE_URL_MAP.release
-const TIMEOUT = 10000
+function handleAuthExpired() {
+  wx.removeStorageSync(STORAGE_KEYS.TOKEN);
+  const app = getApp();
+  if (app && app.globalData) {
+    app.globalData.isLoggedIn = false;
+  }
+}
 
-export function request({ url, method = 'GET', data, header = {} }) {
+function pickMessage(body, fallback) {
+  if (!body || typeof body !== "object") return fallback;
+  return body.msg || body.message || fallback;
+}
+
+export function request({ url, method = "GET", data, header = {} }) {
+  const fullUrl = url.startsWith("http") ? url : `${BASE_URL}${url}`;
+  console.log("[request] send", { method, url: fullUrl, data });
+
   return new Promise((resolve, reject) => {
     wx.request({
-      url: url.startsWith('http') ? url : `${BASE_URL}${url}`,
+      url: fullUrl,
       method,
       data,
       timeout: TIMEOUT,
-      header: {
-        'content-type': 'application/json',
-        ...header,
-      },
+      header: buildHeader(header),
       success(res) {
-        const { statusCode, data: body } = res
-        if (statusCode >= 200 && statusCode < 300) {
-          resolve(body)
-          return
+        const { statusCode, data: body } = res;
+        console.log("[request] recv", {
+          method,
+          url: fullUrl,
+          statusCode,
+          body,
+        });
+        const bizCode =
+          body && typeof body === "object" ? Number(body.code) : NaN;
+
+        if (statusCode === 401 || UNAUTH_CODES.includes(bizCode)) {
+          handleAuthExpired();
+          reject(new Error(pickMessage(body, "登录已失效")));
+          return;
         }
-        reject(new Error((body && body.message) || '请求失败'))
+
+        if (statusCode < 200 || statusCode >= 300) {
+          reject(new Error(pickMessage(body, "请求失败")));
+          return;
+        }
+
+        if (!Number.isNaN(bizCode) && bizCode !== SUCCESS_CODE) {
+          reject(new Error(pickMessage(body, "请求失败")));
+          return;
+        }
+
+        if (
+          body &&
+          typeof body === "object" &&
+          Object.prototype.hasOwnProperty.call(body, "data")
+        ) {
+          resolve(body.data);
+          return;
+        }
+        resolve(body);
       },
       fail(err) {
-        reject(new Error(err.errMsg || '网络异常'))
+        console.log("[request] fail", { method, url: fullUrl, err });
+        reject(new Error(err.errMsg || "网络异常"));
       },
-    })
-  })
+    });
+  });
 }

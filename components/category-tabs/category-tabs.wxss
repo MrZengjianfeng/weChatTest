@@ -33,7 +33,9 @@
   color: #ffffff;
 }
 
-.category__emoji {
-  margin-right: 6rpx;
-  font-size: 24rpx;
+.category__icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
+  flex-shrink: 0;
 }

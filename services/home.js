@@ -1,45 +1,18 @@
 /**
  * 首页聚合数据
- * 目前无后端，返回本地 mock。接口就绪后改为 request({ url: '/home' })，字段保持不变。
+ * 轮播、分类来自 GET /api/v1/setting；公告、快捷入口、游戏列表暂用本地数据。
  *
  * 返回：
  * - noticeText 跑马灯文案
  * - banners[] { id, image, action }
  * - shortcuts[] { id, label, icon, theme, badge }
- * - categories[] { id, name, icon }
+ * - categories[] { id, name, icon }  icon 为远程图地址
  * - games[] { id, name, categoryId, cover, color }  cover 空则格子走色块占位
  */
+import { getSetting } from "./setting";
 
 const NOTICE_TEXT =
   "Welcome Bonus: Deposit PKR 500 get PKR 1,500 FREE · New Slots Added..";
-
-const BANNERS = [
-  {
-    id: "1",
-    image: "/assets/images/banner/1.jpg",
-    action: "topup",
-  },
-  {
-    id: "2",
-    image: "/assets/images/banner/2.jpg",
-    action: "bonus",
-  },
-  {
-    id: "3",
-    image: "/assets/images/banner/3.jpg",
-    action: "slots",
-  },
-  {
-    id: "4",
-    image: "/assets/images/banner/4.jpg",
-    action: "vip",
-  },
-  {
-    id: "5",
-    image: "/assets/images/banner/5.jpg",
-    action: "wallet",
-  },
-];
 
 const SHORTCUTS = [
   {
@@ -77,16 +50,6 @@ const SHORTCUTS = [
     theme: "record",
     badge: 0,
   },
-];
-
-const CATEGORIES = [
-  { id: "hot", name: "HOT", icon: "🔥" },
-  { id: "played", name: "played", icon: "" },
-  { id: "table", name: "Table", icon: "" },
-  { id: "card", name: "Card", icon: "" },
-  { id: "blockchain", name: "BLOCKCHAIN", icon: "" },
-  { id: "slots", name: "Slots", icon: "" },
-  { id: "fish", name: "Fish", icon: "" },
 ];
 
 const GAMES = [
@@ -176,12 +139,33 @@ const GAMES = [
   },
 ];
 
-export function getHomeFeed() {
-  return Promise.resolve({
+function mapBanners(carousels) {
+  return (carousels || []).map((item, index) => ({
+    id: `banner-${index}`,
+    image: item.image_url || "",
+    action: item.action || "",
+  }));
+}
+
+function mapCategories(labels) {
+  return (labels || []).map((item) => ({
+    id: String(item.id),
+    name: item.label_name || "",
+    icon: item.icon || "",
+  }));
+}
+
+export async function getHomeFeed() {
+  const setting = await getSetting();
+  console.log("setting", setting);
+  const bannersList = mapBanners(setting?.carousels || []);
+  const categoriesList = mapCategories(setting?.game_labels || []);
+
+  return {
     noticeText: NOTICE_TEXT,
-    banners: BANNERS,
+    banners: bannersList,
     shortcuts: SHORTCUTS,
-    categories: CATEGORIES,
+    categories: categoriesList,
     games: GAMES,
-  });
+  };
 }

@@ -2,19 +2,22 @@
 <view class="hero">
   <swiper
     class="banner"
-    autoplay
-    circular
+    autoplay="{{canAutoplay}}"
+    circular="{{canAutoplay}}"
+    disable-touch="{{!canAutoplay}}"
     interval="4000"
     bindchange="onChange"
   >
     <!-- swiper-item 必须自己有宽高，Skyline 里 image 的 100% 才量得到 -->
+    <!-- 无数据也留一页占位，避免 Skyline 把空 swiper 高度收成 0 -->
+    <swiper-item class="banner__slide" wx:if="{{!list.length}}"></swiper-item>
     <swiper-item class="banner__slide" wx:for="{{list}}" wx:key="id">
       <view class="banner__item" data-id="{{item.id}}" bind:tap="onTapItem">
         <image class="banner__image" src="{{item.image}}" mode="aspectFill" />
       </view>
     </swiper-item>
   </swiper>
-  <view class="banner__dots">
+  <view class="banner__dots" wx:if="{{canAutoplay}}">
     <view
       class="banner__dot {{index === current ? 'banner__dot--active' : ''}}"
       wx:for="{{list}}"
