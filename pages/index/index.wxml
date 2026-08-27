@@ -28,10 +28,9 @@
       active-id="{{activeCategoryId}}"
       bind:change="onChangeCategory"
     ></category-tabs>
-    <!-- 模块6：当前分类下的游戏；loading 为 true 时不展示空态 -->
+    <!-- 模块6：按当前分类 id 拉游戏；id 空则组件内清空且不请求 -->
     <game-grid
-      list="{{displayGames}}"
-      loading="{{isLoading}}"
+      game-label-id="{{activeCategoryId}}"
       bind:select="onSelectGame"
     ></game-grid>
   </view>

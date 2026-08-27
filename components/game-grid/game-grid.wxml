@@ -1,24 +1,20 @@
-<view class="game-grid" wx:if="{{list.length}}">
+<view class="game-grid" wx:if="{{gameList.length}}">
   <view
     class="game-card"
-    wx:for="{{list}}"
+    wx:for="{{gameList}}"
     wx:key="id"
     data-id="{{item.id}}"
     bind:tap="onTapItem"
   >
     <image
-      wx:if="{{item.cover}}"
+      wx:if="{{item.img}}"
       class="game-card__cover"
-      src="{{item.cover}}"
+      src="{{item.img}}"
       mode="aspectFill"
     />
-    <!-- 动态色值只能走 style；有封面后这条占位不会渲染 -->
-    <view wx:else class="game-card__placeholder" style="background: {{item.color}};">
-      <text class="game-card__name">{{item.name}}</text>
-    </view>
   </view>
 </view>
 <!-- 与 grid 互斥：有数据走格子，加载中不提示空，加载完仍为空才提示 -->
-<view class="empty" wx:elif="{{!loading}}">
+<view class="empty" wx:elif="{{!isLoading}}">
   <text class="empty__text">暂无游戏</text>
 </view>
