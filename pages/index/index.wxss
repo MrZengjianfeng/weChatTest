@@ -2,7 +2,7 @@
   首页布局（Skyline + 自定义导航）
 
   page 纵向 flex：导航 → 跑马灯 → scroll-view 吃剩余高度 → auth-bar 绝对定位叠在底部。
-  滚动必须走 .scrollarea，不要改成普通 view overflow 滚动，否则 sticky-section 失效。
+  真实内容走 type="nested"：头部滚完后分类条贴在跑马灯下，game-grid 吃剩余高度。
 */
 
 page {
@@ -30,13 +30,31 @@ page {
 }
 
 /*
+  nested-scroll-body 唯一子节点：高度等于 .scrollarea。
+  分类条在顶部，下面 game-grid 用剩余 px 高度自己滚。
+*/
+.home-pinned {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/*
   吸顶条铺满宽度，实心底挡住下方格子往上透出来。
   高度 88rpx 与 category-tabs / 骨架 tabs 对齐，切换加载时不要跳。
 */
 .home-tabs {
   width: 100%;
   height: 88rpx;
+  flex-shrink: 0;
   background: var(--color-bg);
+}
+
+.home-grid-scroll {
+  width: 100%;
+  flex: 1;
 }
 
 /*
@@ -194,8 +212,9 @@ banner-swiper {
 }
 
 category-tabs,
-sticky-section,
-sticky-header {
+game-grid,
+nested-scroll-header,
+nested-scroll-body {
   display: block;
   width: 100%;
 }

@@ -19,10 +19,16 @@
  * 4 shortcut-entry   select → { id } → onSelectShortcut
  * 5 category-tabs    change → { id } → onChangeCategory（受控）
  * 6 game-grid        select → { id } → onSelectGame
+ *                    下拉刷新 / 上拉翻页由里层 scroll-view 转发 refresh / loadMore
  * 7 auth-bar         login / register → 登录页 / 注册页
  *
  * 鉴权：轮播、快捷入口、游戏点击走 _guardAuth；未登录跳 ROUTES.LOGIN。
  * 搜索、分类切换不拦登录。
+ *
+ * 滚动：真实内容用 scroll-view type="nested"。
+ * 轮播/搜索/入口在 header 里滚走；分类条在 body 顶，滚完后贴在跑马灯下。
+ * game-grid 视口高度 = 屏幕 − 导航 − 跑马灯 − 分类条，多出来的格子在里层滚。
+ * 里层 list 开 refresher 和下拉触底：刷新重置第 1 页，触底按页加载。
  */
 import { getHomeFeed } from "../../services/home";
 import { ROUTES } from "../../config/routes";
@@ -56,10 +62,31 @@ Page({
      * 切换只改这一项，不要在页面里再拉游戏列表。
      */
     activeCategoryId: "",
+    /**
+     * nested-scroll-body 高度（px）= 窗口 − 导航 − 跑马灯，即 .scrollarea 可视高度。
+     * 分类条吸顶后贴在这块顶部。
+     */
+    pinnedHeight: 0,
+    /**
+     * game-grid 视口高度（px）= pinnedHeight − 分类条 88rpx。
+     * 也就是屏幕减去导航、跑马灯、吸顶条之后的剩余高度。
+     */
+    gridHeight: 0,
+    /** 里层 scroll-view 下拉刷新动画开关，请求结束后必须关掉 */
+    isGridRefreshing: false,
   },
 
   onLoad() {
+    this._updateGridMetrics();
     this._loadHome();
+  },
+
+  onReady() {
+    this._updateGridMetrics();
+  },
+
+  onResize() {
+    this._updateGridMetrics();
   },
 
   onShow() {
@@ -115,6 +142,34 @@ Page({
   },
 
   /**
+   * 游戏格子下拉刷新。列表重置第 1 页，请求在 game-grid 内完成。
+   */
+  async onGridRefresh() {
+    this.setData({ isGridRefreshing: true });
+    const grid = this.selectComponent("#game-grid");
+    try {
+      if (grid && typeof grid.refresh === "function") {
+        await grid.refresh();
+      }
+    } finally {
+      // 同一事件循环里立刻关掉 refresher 时，部分基础库动画收不回去
+      wx.nextTick(() => {
+        this.setData({ isGridRefreshing: false });
+      });
+    }
+  },
+
+  /**
+   * 游戏格子上拉加载更多。请求进行中组件内部会忽略重复触发。
+   */
+  onGridLoadMore() {
+    const grid = this.selectComponent("#game-grid");
+    if (grid && typeof grid.loadMore === "function") {
+      grid.loadMore();
+    }
+  },
+
+  /**
    * 游戏格子点击。游戏详情尚未接入，登录后 toast 占位。
    */
   onSelectGame(e) {
@@ -157,8 +212,58 @@ Page({
         icon: "none",
       });
     } finally {
-      this.setData({ isLoading: false });
+      this.setData({ isLoading: false }, () => {
+        this._updateGridMetrics();
+      });
     }
+  },
+
+  /**
+   * 分类条吸顶后，游戏格子要铺满剩余屏幕。
+   * 先按窗口估算，再量 .scrollarea，避免导航/胶囊高度写死。
+   */
+  _updateGridMetrics() {
+    const tabsHeight = this._rpxToPx(88);
+    const estimated = this._estimatePinnedHeight();
+    if (estimated > 0 && !this.data.pinnedHeight) {
+      this.setData({
+        pinnedHeight: estimated,
+        gridHeight: Math.max(estimated - tabsHeight, 0),
+      });
+    }
+    this.createSelectorQuery()
+      .select(".scrollarea")
+      .boundingClientRect((rect) => {
+        if (!rect || !rect.height) return;
+        const pinnedHeight = Math.round(rect.height);
+        const gridHeight = Math.max(pinnedHeight - tabsHeight, 0);
+        if (
+          pinnedHeight === this.data.pinnedHeight &&
+          gridHeight === this.data.gridHeight
+        ) {
+          return;
+        }
+        this.setData({ pinnedHeight, gridHeight });
+      })
+      .exec();
+  },
+
+  /** .scrollarea = 窗口高度 − 自定义导航 − 跑马灯 64rpx */
+  _estimatePinnedHeight() {
+    const windowInfo = wx.getWindowInfo() || {};
+    const windowHeight = windowInfo.windowHeight || 0;
+    const statusBarHeight = windowInfo.statusBarHeight || 0;
+    const menu = wx.getMenuButtonBoundingClientRect() || {};
+    const menuTop = menu.top || 0;
+    const menuBottom = menu.bottom || 0;
+    const navHeight = menuBottom + Math.max(menuTop - statusBarHeight, 0);
+    const marqueeHeight = this._rpxToPx(64);
+    return Math.max(Math.round(windowHeight - navHeight - marqueeHeight), 0);
+  },
+
+  _rpxToPx(rpx) {
+    const windowWidth = (wx.getWindowInfo() || {}).windowWidth || 375;
+    return Math.round((rpx * windowWidth) / 750);
   },
 
   /**

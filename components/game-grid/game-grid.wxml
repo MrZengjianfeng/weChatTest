@@ -4,23 +4,29 @@
     <view class="game-card__cover"></view>
   </view>
 </view>
-<view class="game-grid" wx:elif="{{gameList.length}}">
-  <view
-    class="game-card"
-    wx:for="{{gameList}}"
-    wx:key="id"
-    data-id="{{item.id}}"
-    bind:tap="onTapItem"
-  >
-    <image
-      wx:if="{{item.img}}"
-      class="game-card__cover"
-      src="{{item.img}}"
-      mode="aspectFill"
-    />
-    <view wx:else class="game-card__cover"></view>
+<block wx:elif="{{gameList.length}}">
+  <view class="game-grid">
+    <view
+      class="game-card"
+      wx:for="{{gameList}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bind:tap="onTapItem"
+    >
+      <image
+        wx:if="{{item.img}}"
+        class="game-card__cover"
+        src="{{item.img}}"
+        mode="aspectFill"
+      />
+      <view wx:else class="game-card__cover"></view>
+    </view>
   </view>
-</view>
+  <view class="game-grid-status">
+    <text wx:if="{{loadingMore}}" class="game-grid-status__text">加载中...</text>
+    <text wx:elif="{{!hasMore}}" class="game-grid-status__text">没有更多了</text>
+  </view>
+</block>
 <view class="empty" wx:else>
   <text class="empty__text">暂无游戏</text>
 </view>

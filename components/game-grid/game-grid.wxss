@@ -46,3 +46,15 @@
   font-size: 26rpx;
   color: var(--color-text-secondary);
 }
+
+.game-grid-status {
+  padding: 8rpx 0 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-grid-status__text {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}

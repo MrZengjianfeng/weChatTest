@@ -6,15 +6,16 @@
   - notice-marquee：模块1，page 的 flex 子项，始终贴在导航下方
   - auth-bar：模块7，absolute 叠在 page 底部，未登录才渲染
 
-  【滚动层 scroll-view type="custom"】
-  Skyline 吸顶只能 custom；sticky-header 必须是 sticky-section 的直接子节点。
-  加载中只渲染骨架，避免空轮播/空分类先闪一帧。
+  【滚动层】
+  加载中用 type="list" 只渲染骨架。
+  真实内容用 type="nested"：轮播/搜索/入口在 nested-scroll-header 里滚走；
+  分类条在 body 顶部，头部滚完后贴在跑马灯下方；game-grid 高度 = 剩余视口。
 
   真实内容顺序：
   2 banner-swiper     轮播；select → { id }
   3 search-entry      搜索入口（不是输入框），负边距叠在轮播底部；search → 跳搜索页
   4 shortcut-entry    五个快捷入口；select → { id }
-  5 category-tabs     分类胶囊，滚到顶后吸在跑马灯下方；受控 active-id；change → { id }
+  5 category-tabs     分类胶囊，头部滚完后吸在跑马灯下方；受控 active-id；change → { id }
   6 game-grid         按 activeCategoryId 自己请求游戏；id 空则清空且不请求；select → { id }
 
   未登录时 home-body 加 home--unauth，给底部登录条留出可滚空白，避免最后一行被挡住。
@@ -32,9 +33,10 @@
 </view>
 <notice-marquee wx:else text="{{noticeText}}"></notice-marquee>
 
-<scroll-view class="scrollarea" scroll-y type="custom">
+<!-- 骨架单独一条滚动，避免 nested 结构在空数据时闪一帧 -->
+<scroll-view wx:if="{{isLoading}}" class="scrollarea" scroll-y type="list">
   <!-- 骨架尺寸对齐真实模块：轮播 368rpx、搜索负边距悬浮、5 个入口、4 个胶囊、6 张卡 -->
-  <view wx:if="{{isLoading}}" class="home home-skeleton">
+  <view class="home home-skeleton">
     <view class="home-skeleton__banner"></view>
     <view class="home-skeleton__search">
       <view class="home-skeleton__bone home-skeleton__search-icon"></view>
@@ -61,9 +63,11 @@
       ></view>
     </view>
   </view>
+</scroll-view>
 
-  <block wx:else>
-    <!-- 轮播 + 搜索 + 快捷入口：随列表滚走，不参与吸顶 -->
+<scroll-view wx:else class="scrollarea" scroll-y type="nested">
+  <!-- 轮播 + 搜索 + 快捷入口：随外层滚走 -->
+  <nested-scroll-header>
     <view class="home-head">
       <!-- 模块2：轮播。list 为空时组件自己处理空态 -->
       <banner-swiper list="{{banners}}" bind:select="onSelectBanner"></banner-swiper>
@@ -72,35 +76,55 @@
       <!-- 模块4：五个入口，业务页未接时页面 toast 占位 -->
       <shortcut-entry list="{{shortcuts}}" bind:select="onSelectShortcut"></shortcut-entry>
     </view>
+  </nested-scroll-header>
 
-    <sticky-section>
+  <!--
+    body 撑满 scrollarea；分类条固定在这块顶部（头部滚完后等于吸顶）。
+    里层 scroll-view 高度 = pinnedHeight - 88rpx，也就是屏幕减去导航/跑马灯/吸顶。
+  -->
+  <nested-scroll-body>
+    <view class="home-pinned" style="height: {{pinnedHeight}}px;">
       <!--
-        模块5：分类胶囊。sticky-header 滚到顶部后吸在跑马灯下方。
-        active-id 受控，组件不会自己改高亮；change 只回传 { id }。
+        模块5：分类胶囊。active-id 受控，组件不会自己改高亮；change 只回传 { id }。
       -->
-      <sticky-header>
-        <view class="home-tabs">
-          <category-tabs
-            list="{{categories}}"
-            active-id="{{activeCategoryId}}"
-            bind:change="onChangeCategory"
-          ></category-tabs>
-        </view>
-      </sticky-header>
-
-      <!-- 未登录加 home--unauth：padding-bottom 大约等于 auth-bar 高度 + 安全区 -->
-      <view class="home-body {{isLoggedIn ? '' : 'home--unauth'}}">
-        <!--
-          模块6：游戏三列格子。只传分类 id，列表/分页/骨架都在组件内。
-          切换分类 = 改 activeCategoryId，observer 会重新请求。
-        -->
-        <game-grid
-          game-label-id="{{activeCategoryId}}"
-          bind:select="onSelectGame"
-        ></game-grid>
+      <view class="home-tabs">
+        <category-tabs
+          list="{{categories}}"
+          active-id="{{activeCategoryId}}"
+          bind:change="onChangeCategory"
+        ></category-tabs>
       </view>
-    </sticky-section>
-  </block>
+      <scroll-view
+        class="home-grid-scroll"
+        type="list"
+        scroll-y
+        associative-container="nested-scroll-view"
+        style="height: {{gridHeight}}px;"
+        refresher-enabled="{{true}}"
+        refresher-threshold="{{80}}"
+        refresher-default-style="black"
+        refresher-background="#eef3ee"
+        refresher-triggered="{{isGridRefreshing}}"
+        bind:refresherrefresh="onGridRefresh"
+        bind:scrolltolower="onGridLoadMore"
+        lower-threshold="{{120}}"
+      >
+        <!-- 未登录加 home--unauth：padding-bottom 大约等于 auth-bar 高度 + 安全区 -->
+        <view class="home-body {{isLoggedIn ? '' : 'home--unauth'}}">
+          <!--
+            模块6：游戏三列格子。只传分类 id，列表/分页/骨架都在组件内。
+            切换分类 = 改 activeCategoryId，observer 会重新请求。
+            下拉刷新 / 上拉加载由本层 scroll-view 转发到组件 refresh / loadMore。
+          -->
+          <game-grid
+            id="game-grid"
+            game-label-id="{{activeCategoryId}}"
+            bind:select="onSelectGame"
+          ></game-grid>
+        </view>
+      </scroll-view>
+    </view>
+  </nested-scroll-body>
 </scroll-view>
 
 <!--
