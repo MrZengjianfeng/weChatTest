@@ -1,0 +1,39 @@
+---
+description: Skyline 下 WXML/WXSS 写法：列表 key、滚动容器、rpx 与安全区
+globs: "**/*.{wxml,wxss}"
+alwaysApply: false
+---
+
+# WXML / WXSS
+
+## WXML
+
+- 页面滚动用 `scroll-view` + `type="list"`，不要用普通 `view` 撑全屏滚动
+- 列表必须 `wx:key` 且为稳定 id，禁止插入/删除场景用 `index` 当 key
+- 简单显隐 `wx:if`，高频切换用 `hidden`；事件 `bind:tap`，阻止冒泡 `catch:tap`
+- WXML 不做复杂计算，结果放 JS 的 data 字段
+- `image` 必须设宽高并写明 `mode`
+- 自定义事件绑定 kebab-case：`bind:add-cart="onAddCart"`
+
+```xml
+<view
+  class="goods-card"
+  wx:for="{{list}}"
+  wx:key="id"
+  data-id="{{item.id}}"
+  bind:tap="onTapGoods"
+>
+  <image class="goods-card__cover" src="{{item.cover}}" mode="aspectFill" />
+  <text class="goods-card__title">{{item.title}}</text>
+</view>
+```
+
+## WXSS
+
+- 间距/字号/圆角用 `rpx`；1px 细线或设备像素可用 `px`
+- 用 class，不用内联 style 堆业务样式（导航动态高度除外）
+- 类名 kebab-case 或 BEM：`goods-card__title`
+- 颜色字号抽 CSS 变量写在 `app.wxss`，页面不要污染全局
+- 导航高度禁止写死；用 `navigation-bar` 或胶囊 `wx.getMenuButtonBoundingClientRect()`
+- 底部安全区：`env(safe-area-inset-bottom)`
+- Skyline 不完全等于 WebView，不支持的 CSS / `cover-view` hack 不要用

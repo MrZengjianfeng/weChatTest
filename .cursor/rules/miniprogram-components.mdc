@@ -1,0 +1,44 @@
+---
+description: 小程序自定义组件的 properties、事件、样式隔离与导航栏复用约定
+globs: components/**/*.{js,json,wxml,wxss}
+alwaysApply: false
+---
+
+# 组件生成规则
+
+目录 `components/<name>/`（kebab-case），四件套文件名与目录一致。仅在两处以上复用、或结构独立时抽取，不要为一次性 UI 硬拆组件。
+
+## 结构
+
+```js
+Component({
+  options: {
+    multipleSlots: true,
+    styleIsolation: 'isolated',
+  },
+  properties: {
+    title: { type: String, value: '' },
+    visible: { type: Boolean, value: false },
+  },
+  data: {},
+  lifetimes: {
+    attached() {},
+    detached() {},
+  },
+  methods: {
+    onClose() {
+      this.triggerEvent('close')
+    },
+  },
+})
+```
+
+## 约定
+
+- 对外用 `properties`（必须 `type` + `value`），对内用 `data`
+- 默认 `styleIsolation: 'isolated'`，不要轻易 `apply-shared`
+- 自定义事件 kebab-case，只抛业务结果，不抛内部实现
+- 业务跳转交给页面；组件内不要 `wx.navigateTo` 到具体业务页
+- 导航栏复用 `components/navigation-bar`，不要每个页面重写胶囊适配
+- 允许外部微调时用 `extClass` 或 `externalClasses`，不要复制整份组件改颜色
+- json 里 `usingComponents` 只用到的组件，路径用绝对路径 `/components/...`

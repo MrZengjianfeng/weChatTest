@@ -1,0 +1,18 @@
+/* 全局色板 / 字号，组件 isolated 仍可继承这些 CSS 变量 */
+page {
+  --color-primary: #00c853;
+  --color-primary-dark: #0b3d2e;
+  --color-primary-deep: #006c41;
+  --color-text: #111111;
+  --color-text-secondary: #5e7d67;
+  --color-bg: #eef3ee;
+  --color-surface: #ffffff;
+  --color-border: #d4e8d8;
+  --font-size-title: 32rpx;
+  --font-size-body: 28rpx;
+}
+
+page {
+  background: var(--color-bg);
+  color: var(--color-text);
+}

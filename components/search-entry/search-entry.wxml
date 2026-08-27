@@ -1,0 +1,5 @@
+<!-- 整条作为热区，不是 input，避免首页抢焦点 -->
+<view class="search" bind:tap="onTapSearch">
+  <image class="search__icon" src="{{icon}}" mode="aspectFit" />
+  <text class="search__placeholder">{{placeholder}}</text>
+</view>

@@ -1,0 +1,17 @@
+<!-- 搜索占位页：首页搜索入口跳到这里，真正检索接口尚未接入 -->
+<navigation-bar title="{{title}}" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <view class="search-field">
+      <image class="search-field__icon" src="/assets/icons/search.svg" mode="aspectFit" />
+      <input
+        class="search-field__input"
+        placeholder="SEARCH GAMES"
+        placeholder-class="search-field__placeholder"
+        confirm-type="search"
+        bindconfirm="onConfirmSearch"
+      />
+    </view>
+    <text class="hint">输入游戏名称后搜索</text>
+  </view>
+</scroll-view>

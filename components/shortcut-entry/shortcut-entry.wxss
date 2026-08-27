@@ -1,0 +1,51 @@
+.shortcuts {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 36rpx 20rpx 8rpx;
+}
+
+.shortcut {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.shortcut__icon-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shortcut__icon {
+  width: 44px;
+  height: 44px;
+}
+
+.shortcut__badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  padding: 0 8rpx;
+  border-radius: 999rpx;
+  background: #ff3b30;
+  color: #ffffff;
+  font-size: 20rpx;
+  line-height: 32rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.shortcut__label {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #3d4f45;
+  letter-spacing: 1rpx;
+}

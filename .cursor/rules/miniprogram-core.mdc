@@ -1,0 +1,35 @@
+---
+description: 原生微信小程序全局约定：技术栈、目录、命名、新增页面/接口必须遵守
+alwaysApply: true
+---
+
+# 小程序全局约定
+
+本仓库是**原生微信小程序**（Skyline + glass-easel），禁止引入 Taro / uni-app / TypeScript。完整规范见 `docs/微信小程序开发规范.md`。
+
+## 目录
+
+- 页面只放 `pages/<name>/`（kebab-case），组件只放 `components/<name>/`
+- 页面/组件必须四件套：`.js` `.json` `.wxml` `.wxss`（无样式也留空文件）
+- 接口放 `services/`，纯函数放 `utils/`，资源放 `assets/`，环境/路由放 `config/`
+- 业务请求禁止写在页面里，禁止页面直接 `wx.request`
+
+## 命名
+
+- 变量/函数 camelCase；常量 UPPER_SNAKE_CASE；布尔 `is`/`has`/`can` 前缀
+- 组件名与自定义事件 kebab-case（`bind:add-cart`）
+- 私有方法 `_` 前缀：`_loadList`
+
+## 新增页面时必须做
+
+1. 注册到 `app.json` 的 `pages` 或对应分包（第一项仍是首页）
+2. 使用自定义导航：接入 `/components/navigation-bar/navigation-bar`
+3. 复制标准页面骨架（见页面规则），不要自造滚动结构
+4. 接口从 `services/` 引入；文件不存在则先建封装，再写页面
+
+## 禁止
+
+- AppSecret、密钥、明文敏感信息进代码
+- 提交 `console.log` / `debugger`
+- 用 `wx.getSystemInfoSync` 作为首选（用 `wx.getWindowInfo` / `wx.getDeviceInfo`）
+- 把关闭 `urlCheck` 当成默认可提交配置

@@ -1,0 +1,11 @@
+<!-- 左侧图标固定，右侧遮罩裁切滚动轨道 -->
+<view class="marquee">
+  <image class="marquee__icon" src="{{icon}}" mode="aspectFit" />
+  <view class="marquee__mask">
+    <!-- 同一段文案渲染两次，动画位移 50% 时正好接到下一份，看起来是循环 -->
+    <view class="marquee__track">
+      <text class="marquee__text">{{text}}</text>
+      <text class="marquee__text">{{text}}</text>
+    </view>
+  </view>
+</view>

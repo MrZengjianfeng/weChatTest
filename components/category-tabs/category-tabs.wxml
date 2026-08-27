@@ -1,0 +1,20 @@
+<view class="category">
+  <!-- Skyline 横向 scroll-view 必须带 type，且子节点直接作为列表项 -->
+  <scroll-view
+    class="category__scroll"
+    type="list"
+    scroll-x
+    show-scrollbar="{{false}}"
+  >
+    <view
+      class="category__tag {{item.id === activeId ? 'category__tag--active' : ''}}"
+      wx:for="{{list}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bind:tap="onTapItem"
+    >
+      <text wx:if="{{item.icon}}" class="category__emoji">{{item.icon}}</text>
+      <text>{{item.name}}</text>
+    </view>
+  </scroll-view>
+</view>

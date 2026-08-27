@@ -1,0 +1,24 @@
+<!-- 轮播铺满整块组件，指示点叠在图片底部 -->
+<view class="hero">
+  <swiper
+    class="banner"
+    autoplay
+    circular
+    interval="4000"
+    bindchange="onChange"
+  >
+    <!-- swiper-item 必须自己有宽高，Skyline 里 image 的 100% 才量得到 -->
+    <swiper-item class="banner__slide" wx:for="{{list}}" wx:key="id">
+      <view class="banner__item" data-id="{{item.id}}" bind:tap="onTapItem">
+        <image class="banner__image" src="{{item.image}}" mode="aspectFill" />
+      </view>
+    </swiper-item>
+  </swiper>
+  <view class="banner__dots">
+    <view
+      class="banner__dot {{index === current ? 'banner__dot--active' : ''}}"
+      wx:for="{{list}}"
+      wx:key="id"
+    ></view>
+  </view>
+</view>

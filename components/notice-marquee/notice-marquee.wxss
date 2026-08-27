@@ -1,0 +1,49 @@
+.marquee {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 64rpx;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  background: var(--color-primary-dark);
+}
+
+.marquee__icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.marquee__mask {
+  flex: 1;
+  overflow: hidden;
+  height: 40rpx;
+}
+
+/* inline-flex 按内容撑开宽度，translateX(-50%) 才等于「一整段文案」的宽度 */
+.marquee__track {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  animation: marquee-scroll 16s linear infinite;
+}
+
+.marquee__text {
+  flex-shrink: 0;
+  padding-right: 80rpx;
+  font-size: 24rpx;
+  line-height: 40rpx;
+  color: #f5e6a3;
+  white-space: nowrap;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

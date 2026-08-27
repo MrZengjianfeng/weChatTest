@@ -1,0 +1,27 @@
+.search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 80rpx;
+  /* 负边距叠到轮播底部，做出设计稿里的悬浮胶囊 */
+  margin: -40rpx 40rpx 0;
+  padding: 0 28rpx;
+  background: var(--color-surface);
+  border-radius: 999rpx;
+  box-shadow: 0 8rpx 24rpx rgba(11, 61, 46, 0.12);
+  position: relative;
+  z-index: 2;
+}
+
+.search__icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.search__placeholder {
+  font-size: 26rpx;
+  color: #9aaba0;
+  letter-spacing: 1rpx;
+}

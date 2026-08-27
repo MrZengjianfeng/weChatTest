@@ -1,0 +1,8 @@
+<!-- 登录占位页：账号能力接入前用「模拟登录」打通首页登录条显隐 -->
+<navigation-bar title="{{title}}" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <text class="hint">登录页将在后续接入账号能力</text>
+    <view class="btn" bind:tap="onTapMockLogin">模拟登录</view>
+  </view>
+</scroll-view>

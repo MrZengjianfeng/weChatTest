@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "notice-marquee": "/components/notice-marquee/notice-marquee",
+    "banner-swiper": "/components/banner-swiper/banner-swiper",
+    "search-entry": "/components/search-entry/search-entry",
+    "shortcut-entry": "/components/shortcut-entry/shortcut-entry",
+    "category-tabs": "/components/category-tabs/category-tabs",
+    "game-grid": "/components/game-grid/game-grid",
+    "auth-bar": "/components/auth-bar/auth-bar"
+  },
+  "navigationBarTextStyle": "white"
+}

@@ -1,0 +1,7 @@
+<!-- 注册占位页：首页 Register 按钮跳到这里 -->
+<navigation-bar title="{{title}}" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <text class="hint">注册页将在后续接入账号能力</text>
+  </view>
+</scroll-view>

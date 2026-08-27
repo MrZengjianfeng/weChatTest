@@ -1,0 +1,39 @@
+.category {
+  width: 100%;
+  /* Skyline 自定义组件在 type=list 的父滚动里必须有确定高度，否则整块不占位 */
+  height: 88rpx;
+  box-sizing: border-box;
+  padding: 16rpx 24rpx;
+}
+
+.category__scroll {
+  width: 100%;
+  height: 56rpx;
+}
+
+.category__tag {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  height: 56rpx;
+  padding: 0 24rpx;
+  margin-right: 16rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid var(--color-primary-deep, #006c41);
+  background: var(--color-surface, #ffffff);
+  color: var(--color-primary-deep, #006c41);
+  font-size: 24rpx;
+  line-height: 32rpx;
+  box-sizing: border-box;
+}
+
+.category__tag--active {
+  background: var(--color-primary-deep, #006c41);
+  border-color: var(--color-primary-deep, #006c41);
+  color: #ffffff;
+}
+
+.category__emoji {
+  margin-right: 6rpx;
+  font-size: 24rpx;
+}

@@ -1,0 +1,45 @@
+/* 标准页面骨架：page 纵向 flex，scroll-view 吃掉剩余高度 */
+page {
+  /* 给 auth-bar 绝对定位当参照，才能叠在游戏格子底部 */
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.home {
+  padding-bottom: 32rpx;
+}
+
+/* 未登录底栏会盖住内容，多留一截 padding 让最后一行可以滚上来 */
+.home--unauth {
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+}
+
+/* 跑马灯是 page 的 flex 子项，禁止被压缩，否则会被 scroll-view 挤没 */
+notice-marquee {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+/* Skyline list 滚动里自定义组件宿主也要有宽度，避免量不到高度 */
+banner-swiper,
+category-tabs {
+  display: block;
+  width: 100%;
+}
+
+/* 组件内部 isolation，定位必须打在自定义组件宿主上 */
+auth-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+}

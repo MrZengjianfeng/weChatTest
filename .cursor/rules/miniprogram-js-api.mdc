@@ -1,0 +1,50 @@
+---
+description: 小程序 JS 与接口层：async/await、错误处理、services 封装、存储与登录
+globs: "**/*.js"
+alwaysApply: false
+---
+
+# JS 与接口
+
+## 语言
+
+- `const`/`let`，禁止 `var`；比较用 `===`；用 `async/await`
+- 页面方法过长则拆 `_` 私有方法；注释只写原因
+- 空 `catch` 禁止；失败要 Toast 或空状态，不要只打日志
+
+```js
+async _loadDetail(id) {
+  if (!id) return
+  this.setData({ isLoading: true })
+  try {
+    const detail = await getOrderDetail(id)
+    this.setData({ detail })
+  } catch (err) {
+    wx.showToast({ title: err.message || '加载失败', icon: 'none' })
+  } finally {
+    this.setData({ isLoading: false })
+  }
+}
+```
+
+## 接口
+
+- 所有请求走 `utils/request.js`（若无则先封装：baseURL、超时、header、统一错误码）
+- 按域拆 `services/user.js`、`services/order.js`；service 不 `setData`、不弹业务 Toast（登录失效除外）
+- 环境用 `wx.getAccountInfoSync().miniProgram.envVersion`，禁止业务里手写开关
+- 列表请求做防重/序号，避免乱序 `setData`
+
+```js
+import { request } from '../utils/request'
+
+export function getOrderList(params) {
+  return request({ url: '/orders', method: 'GET', data: params })
+}
+```
+
+## 状态与授权
+
+- 全局仅放登录用户等真正全局数据；禁止 `getCurrentPages` 直接改上一页 `data`
+- storage key 集中定义；敏感信息不落明文
+- 授权先说明用途再调 API；拒绝必须有降级
+- 登录失效在请求层统一处理，页面不要各自弹登录

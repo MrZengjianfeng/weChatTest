@@ -1,0 +1,40 @@
+<!--
+  首页：7 个模块纵向拼装。
+  1 跑马灯 notice-marquee（导航下、不随列表滚）
+  2 轮播 banner-swiper
+  3 搜索 search-entry（负边距叠在轮播底部）
+  4 快捷入口 shortcut-entry
+  5 分类标题 category-tabs
+  6 游戏格子 game-grid
+  7 未登录底栏 auth-bar（fixed 叠在内容上）
+  滚动必须走 scroll-view + type="list"，不要改成普通 view 撑高滚动。
+-->
+<!-- 自定义导航：深色底避开右侧胶囊；无返回键 -->
+<navigation-bar title="" back="{{false}}" color="#F2C83A" background="#0B3D2E"></navigation-bar>
+<!-- 模块1：公告跑马灯，放在 scroll-view 外，始终贴在导航下方 -->
+<notice-marquee text="{{noticeText}}"></notice-marquee>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <!-- 未登录时加 home--unauth，给底部登录条留出可滚空白，避免最后一行被挡住 -->
+  <view class="home {{isLoggedIn ? '' : 'home--unauth'}}">
+    <!-- 模块2：轮播，select 回传 { id } -->
+    <banner-swiper list="{{banners}}" bind:select="onSelectBanner"></banner-swiper>
+    <!-- 模块3：搜索入口，本身不是输入框，点击交给页面跳搜索页 -->
+    <search-entry bind:search="onTapSearch"></search-entry>
+    <!-- 模块4：快捷入口，select 回传 { id } -->
+    <shortcut-entry list="{{shortcuts}}" bind:select="onSelectShortcut"></shortcut-entry>
+    <!-- 模块5：分类胶囊，active-id 受控；change 回传 { id } -->
+    <category-tabs
+      list="{{categories}}"
+      active-id="{{activeCategoryId}}"
+      bind:change="onChangeCategory"
+    ></category-tabs>
+    <!-- 模块6：当前分类下的游戏；loading 为 true 时不展示空态 -->
+    <game-grid
+      list="{{displayGames}}"
+      loading="{{isLoading}}"
+      bind:select="onSelectGame"
+    ></game-grid>
+  </view>
+</scroll-view>
+<!-- 模块7：未登录才出现；登录/注册路由由页面处理 -->
+<auth-bar wx:if="{{!isLoggedIn}}" bind:login="onTapLogin" bind:register="onTapRegister"></auth-bar>

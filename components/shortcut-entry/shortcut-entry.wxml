@@ -1,0 +1,15 @@
+<view class="shortcuts">
+  <view
+    class="shortcut"
+    wx:for="{{list}}"
+    wx:key="id"
+    data-id="{{item.id}}"
+    bind:tap="onTapItem"
+  >
+    <view class="shortcut__icon-wrap">
+      <image class="shortcut__icon" src="{{item.icon}}" mode="aspectFit" />
+      <view class="shortcut__badge" wx:if="{{item.badge}}">{{item.badge}}</view>
+    </view>
+    <text class="shortcut__label">{{item.label}}</text>
+  </view>
+</view>

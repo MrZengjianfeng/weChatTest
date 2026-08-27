@@ -1,0 +1,30 @@
+.auth-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* 底部安全区，避免 Home 条挡住按钮 */
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: rgba(18, 18, 18, 0.82);
+}
+
+.auth-bar__btn {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.auth-bar__btn--login {
+  margin-right: 16rpx;
+  background: #ffffff;
+  color: var(--color-primary);
+}
+
+.auth-bar__btn--register {
+  background: var(--color-primary);
+  color: #ffffff;
+}

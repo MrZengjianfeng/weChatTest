@@ -1,0 +1,5 @@
+<!-- 定位在首页 page 上（见 pages/index/index.wxss 的 auth-bar 选择器） -->
+<view class="auth-bar">
+  <view class="auth-bar__btn auth-bar__btn--login" bind:tap="onTapLogin">Login</view>
+  <view class="auth-bar__btn auth-bar__btn--register" bind:tap="onTapRegister">Register</view>
+</view>

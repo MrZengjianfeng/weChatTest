@@ -1,0 +1,78 @@
+---
+description: 新增或修改小程序页面时使用标准骨架、生命周期和 setData 约定
+globs: pages/**/*.{js,json,wxml,wxss}
+alwaysApply: false
+---
+
+# 页面生成规则
+
+新建页面目录 `pages/<page-name>/`，四个文件名与目录名一致。沿用首页骨架，适配 Skyline。
+
+## 四件套模板
+
+`page-name.json`：
+
+```json
+{
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar"
+  }
+}
+```
+
+`page-name.wxml`：
+
+```xml
+<navigation-bar title="{{title}}" back="{{true}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <!-- 内容 -->
+  </view>
+</scroll-view>
+```
+
+无返回键时 `back="{{false}}"`。首页已是该结构，不要改成普通 `view` 滚动。
+
+`page-name.wxss`：
+
+```css
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+```
+
+`page-name.js` 顺序：`data` → `onLoad/onShow/onReady/onHide/onUnload` → 下拉/触底/分享 → 事件 `onTapXxx` → 私有 `_loadXxx`。
+
+```js
+Page({
+  data: { title: '', isLoading: false },
+  onLoad(query) { this._loadData(query) },
+  onShow() {},
+  async _loadData(query) {
+    this.setData({ isLoading: true })
+    try {
+      // const data = await someService(query)
+      // this.setData({ ... })
+    } catch (err) {
+      wx.showToast({ title: err.message || '加载失败', icon: 'none' })
+    } finally {
+      this.setData({ isLoading: false })
+    }
+  },
+})
+```
+
+## 行为约定
+
+- `data` 只放视图字段；`setData` 只传变化项（`'list[0].status': 'paid'`）
+- 初始化请求放 `onLoad`；每次可见刷新放 `onShow` 且必须可重入
+- `onUnload` 清理定时器/监听；写回 `setData` 前避免页面已卸载
+- 补齐 loading / 空态 / 失败态；提交按钮防重复点击
+- 路由用 `wx.navigateTo` 等官方 API；复杂数据不塞 URL
+- 组件路径用绝对路径：`/components/...`
