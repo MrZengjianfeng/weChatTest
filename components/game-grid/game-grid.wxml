@@ -1,4 +1,10 @@
-<view class="game-grid" wx:if="{{gameList.length}}">
+<!-- 请求中优先骨架：结构/class 与真实格子相同，避免占位和成品对不齐 -->
+<view class="game-grid" wx:if="{{isLoading}}">
+  <view class="game-card" wx:for="{{skeletonList}}" wx:key="*this">
+    <view class="game-card__cover"></view>
+  </view>
+</view>
+<view class="game-grid" wx:elif="{{gameList.length}}">
   <view
     class="game-card"
     wx:for="{{gameList}}"
@@ -12,9 +18,9 @@
       src="{{item.img}}"
       mode="aspectFill"
     />
+    <view wx:else class="game-card__cover"></view>
   </view>
 </view>
-<!-- 与 grid 互斥：有数据走格子，加载中不提示空，加载完仍为空才提示 -->
-<view class="empty" wx:elif="{{!isLoading}}">
+<view class="empty" wx:else>
   <text class="empty__text">暂无游戏</text>
 </view>

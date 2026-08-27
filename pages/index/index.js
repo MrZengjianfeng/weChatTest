@@ -9,6 +9,8 @@ import { ROUTES } from "../../config/routes";
 Page({
   data: {
     title: "",
+    // 首屏先出骨架，等 _loadHome 结束再切真实模块
+    isLoading: true,
     // 与 app.globalData.isLoggedIn 同步；决定是否展示底部登录条
     isLoggedIn: false,
     noticeText: "",
@@ -80,6 +82,7 @@ Page({
   },
 
   async _loadHome() {
+    this.setData({ isLoading: true });
     try {
       const feed = await getHomeFeed();
       const categories = feed.categories || [];
@@ -97,6 +100,8 @@ Page({
         title: err.message || "加载失败，请稍后重试",
         icon: "none",
       });
+    } finally {
+      this.setData({ isLoading: false });
     }
   },
 

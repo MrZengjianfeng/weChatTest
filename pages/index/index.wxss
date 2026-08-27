@@ -23,9 +23,138 @@ page {
 }
 
 /* 跑马灯是 page 的 flex 子项，禁止被压缩，否则会被 scroll-view 挤没 */
-notice-marquee {
+notice-marquee,
+.home-skeleton__notice {
   flex-shrink: 0;
   width: 100%;
+}
+
+/* 骨架骨块统一呼吸，尺寸跟真实模块对齐，避免加载结束时布局跳变 */
+.home-skeleton__bone {
+  background: #d7e4db;
+  animation: home-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.home-skeleton__notice {
+  height: 64rpx;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: var(--color-primary-dark);
+}
+
+.home-skeleton__notice-bone {
+  width: 70%;
+  height: 28rpx;
+  border-radius: 8rpx;
+  background: rgba(245, 230, 163, 0.28);
+}
+
+.home-skeleton__banner {
+  width: 100%;
+  height: 368rpx;
+  background: var(--color-primary-dark);
+}
+
+.home-skeleton__search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 80rpx;
+  margin: -40rpx 40rpx 0;
+  padding: 0 28rpx;
+  background: var(--color-surface);
+  border-radius: 999rpx;
+  box-shadow: 0 8rpx 24rpx rgba(11, 61, 46, 0.12);
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.home-skeleton__search-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 16rpx;
+  border-radius: 8rpx;
+  flex-shrink: 0;
+}
+
+.home-skeleton__search-text {
+  width: 240rpx;
+  height: 28rpx;
+  border-radius: 8rpx;
+}
+
+.home-skeleton__shortcuts {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 36rpx 20rpx 8rpx;
+}
+
+.home-skeleton__shortcut {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-skeleton__shortcut-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 16rpx;
+}
+
+.home-skeleton__shortcut-label {
+  width: 64rpx;
+  height: 22rpx;
+  margin-top: 12rpx;
+  border-radius: 6rpx;
+}
+
+.home-skeleton__tabs {
+  width: 100%;
+  height: 88rpx;
+  box-sizing: border-box;
+  padding: 16rpx 24rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+}
+
+.home-skeleton__tab {
+  height: 56rpx;
+  width: 140rpx;
+  margin-right: 16rpx;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+}
+
+.home-skeleton__grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 16rpx 20rpx 0;
+}
+
+.home-skeleton__card {
+  width: 31.2%;
+  height: 218rpx;
+  margin: 0 1.066% 16rpx;
+  border-radius: 20rpx;
+}
+
+@keyframes home-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
 }
 
 /* Skyline list 滚动里自定义组件宿主也要有宽度，避免量不到高度 */

@@ -24,14 +24,24 @@ Component({
     loadingMore: false,
     oldCursor: null,
     hasMore: false,
-    isLoading: false,
+    // 首屏先出骨架，避免 observer 跑起来前闪「暂无游戏」
+    isLoading: true,
+    // 与真实格子同一套 class，条数跟 pageSize 对齐
+    skeletonList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
   },
   observers: {
     gameLabelId(gameLabelId) {
-      console.log("gameLabelId:", gameLabelId);
-      if (gameLabelId) {
-        this._loadGames(gameLabelId);
+      if (!gameLabelId) {
+        this.setData({
+          gameList: [],
+          isLoading: false,
+          hasMore: false,
+          oldCursor: null,
+          page: 1,
+        });
+        return;
       }
+      this._loadGames(gameLabelId);
     },
   },
   methods: {
@@ -42,24 +52,39 @@ Component({
     },
 
     async _loadGames(gameLabelId) {
-      this.setData({ isLoading: true });
-      let params = {
-        page: this.data.page,
+      const seq = (this._loadSeq || 0) + 1;
+      this._loadSeq = seq;
+      this.setData({
+        isLoading: true,
+        gameList: [],
+        page: 1,
+        oldCursor: null,
+        hasMore: false,
+      });
+      const params = {
+        page: 1,
         pageSize: this.data.pageSize,
         gameLabelId: Number(gameLabelId),
-        cursor: this.data.oldCursor,
+        cursor: null,
       };
       try {
         const res = await getGames(params);
-        console.log("res", res);
+        if (seq !== this._loadSeq) return;
         this.setData({
           gameList: res?.games || [],
           hasMore: res?.hasMore ?? false,
           oldCursor: res?.cursor ?? null,
-          isLoading: false,
         });
       } catch (err) {
-        console.log("err:", err);
+        if (seq !== this._loadSeq) return;
+        wx.showToast({
+          title: err.message || "加载失败，请稍后重试",
+          icon: "none",
+        });
+      } finally {
+        if (seq === this._loadSeq) {
+          this.setData({ isLoading: false });
+        }
       }
     },
   },

@@ -11,11 +11,42 @@
 -->
 <!-- 自定义导航：深色底避开右侧胶囊；无返回键 -->
 <navigation-bar title="" back="{{false}}" color="#F2C83A" background="#0B3D2E"></navigation-bar>
-<!-- 模块1：公告跑马灯，放在 scroll-view 外，始终贴在导航下方 -->
-<notice-marquee text="{{noticeText}}"></notice-marquee>
+<!-- 模块1：公告跑马灯，放在 scroll-view 外，始终贴在导航下方；加载中换成同高度骨架 -->
+<view wx:if="{{isLoading}}" class="home-skeleton__notice">
+  <view class="home-skeleton__bone home-skeleton__notice-bone"></view>
+</view>
+<notice-marquee wx:else text="{{noticeText}}"></notice-marquee>
 <scroll-view class="scrollarea" scroll-y type="list">
+  <!-- 请求中只渲染骨架，避免空轮播/空分类先闪一帧 -->
+  <view wx:if="{{isLoading}}" class="home home-skeleton">
+    <view class="home-skeleton__banner"></view>
+    <view class="home-skeleton__search">
+      <view class="home-skeleton__bone home-skeleton__search-icon"></view>
+      <view class="home-skeleton__bone home-skeleton__search-text"></view>
+    </view>
+    <view class="home-skeleton__shortcuts">
+      <view class="home-skeleton__shortcut" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
+        <view class="home-skeleton__bone home-skeleton__shortcut-icon"></view>
+        <view class="home-skeleton__bone home-skeleton__shortcut-label"></view>
+      </view>
+    </view>
+    <view class="home-skeleton__tabs">
+      <view
+        class="home-skeleton__bone home-skeleton__tab"
+        wx:for="{{[1,2,3,4]}}"
+        wx:key="*this"
+      ></view>
+    </view>
+    <view class="home-skeleton__grid">
+      <view
+        class="home-skeleton__bone home-skeleton__card"
+        wx:for="{{[1,2,3,4,5,6]}}"
+        wx:key="*this"
+      ></view>
+    </view>
+  </view>
   <!-- 未登录时加 home--unauth，给底部登录条留出可滚空白，避免最后一行被挡住 -->
-  <view class="home {{isLoggedIn ? '' : 'home--unauth'}}">
+  <view wx:else class="home {{isLoggedIn ? '' : 'home--unauth'}}">
     <!-- 模块2：轮播，select 回传 { id } -->
     <banner-swiper list="{{banners}}" bind:select="onSelectBanner"></banner-swiper>
     <!-- 模块3：搜索入口，本身不是输入框，点击交给页面跳搜索页 -->
