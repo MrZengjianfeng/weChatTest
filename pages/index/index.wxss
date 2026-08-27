@@ -1,6 +1,12 @@
-/* 标准页面骨架：page 纵向 flex，scroll-view 吃掉剩余高度 */
+/*
+  首页布局（Skyline + 自定义导航）
+
+  page 纵向 flex：导航 → 跑马灯 → scroll-view 吃剩余高度 → auth-bar 绝对定位叠在底部。
+  滚动必须走 .scrollarea，不要改成普通 view overflow 滚动，否则 sticky-section 失效。
+*/
+
 page {
-  /* 给 auth-bar 绝对定位当参照，才能叠在游戏格子底部 */
+  /* 给 auth-bar 的 absolute 当参照；没有 relative 会跑到错误的包含块 */
   position: relative;
   height: 100vh;
   display: flex;
@@ -13,28 +19,44 @@ page {
   overflow-y: hidden;
 }
 
-.home {
+.home,
+.home-body {
   padding-bottom: 32rpx;
 }
 
-/* 未登录底栏会盖住内容，多留一截 padding 让最后一行可以滚上来 */
+/* 底栏约 80rpx 按钮 + 16rpx 内边距 + 安全区；多留一点避免最后一行贴边 */
 .home--unauth {
   padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
-/* 跑马灯是 page 的 flex 子项，禁止被压缩，否则会被 scroll-view 挤没 */
+/*
+  吸顶条铺满宽度，实心底挡住下方格子往上透出来。
+  高度 88rpx 与 category-tabs / 骨架 tabs 对齐，切换加载时不要跳。
+*/
+.home-tabs {
+  width: 100%;
+  height: 88rpx;
+  background: var(--color-bg);
+}
+
+/*
+  跑马灯是 page 的 flex 子项。不写 flex-shrink: 0 会被 scroll-view 挤成 0 高度。
+  骨架 notice 必须同高（64rpx），加载结束才不会把整页顶一下。
+*/
 notice-marquee,
 .home-skeleton__notice {
   flex-shrink: 0;
   width: 100%;
 }
 
-/* 骨架骨块统一呼吸，尺寸跟真实模块对齐，避免加载结束时布局跳变 */
+/* ---------- 骨架：尺寸跟真实模块对齐，加载结束布局尽量不跳 ---------- */
+
 .home-skeleton__bone {
   background: #d7e4db;
   animation: home-skeleton-pulse 1.4s ease-in-out infinite;
 }
 
+/* 对齐 notice-marquee 深色条 */
 .home-skeleton__notice {
   height: 64rpx;
   padding: 0 24rpx;
@@ -52,12 +74,14 @@ notice-marquee,
   background: rgba(245, 230, 163, 0.28);
 }
 
+/* 对齐 banner-swiper 宿主高度 */
 .home-skeleton__banner {
   width: 100%;
   height: 368rpx;
   background: var(--color-primary-dark);
 }
 
+/* 对齐 search-entry：负边距叠在轮播底部，z-index 盖住轮播下沿 */
 .home-skeleton__search {
   display: flex;
   flex-direction: row;
@@ -101,6 +125,7 @@ notice-marquee,
   align-items: center;
 }
 
+/* 快捷入口图标在组件里是 44px（不是 rpx），骨架跟着用 px 才对齐 */
 .home-skeleton__shortcut-icon {
   width: 44px;
   height: 44px;
@@ -140,6 +165,7 @@ notice-marquee,
   padding: 16rpx 20rpx 0;
 }
 
+/* 约三列：31.2% + 左右 1.066% margin，和 game-grid 卡片宽高接近 */
 .home-skeleton__card {
   width: 31.2%;
   height: 218rpx;
@@ -157,19 +183,27 @@ notice-marquee,
   }
 }
 
-/* Skyline list 滚动里自定义组件宿主也要有宽度，避免量不到高度 */
+/*
+  Skyline 自定义组件宿主默认可能量不到宽高。
+  轮播必须写死 368rpx，否则 swiper 高度为 0。
+*/
 banner-swiper {
   display: block;
   width: 100%;
   height: 368rpx;
 }
 
-category-tabs {
+category-tabs,
+sticky-section,
+sticky-header {
   display: block;
   width: 100%;
 }
 
-/* 组件内部 isolation，定位必须打在自定义组件宿主上 */
+/*
+  组件 styleIsolation: isolated，页面只能定位自定义组件宿主。
+  写在组件内部的 position 出不来，底栏会跟着文档流走。
+*/
 auth-bar {
   position: absolute;
   left: 0;

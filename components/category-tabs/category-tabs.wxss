@@ -1,9 +1,11 @@
 .category {
   width: 100%;
-  /* Skyline 自定义组件在 type=list 的父滚动里必须有确定高度，否则整块不占位 */
+  /* Skyline 自定义组件在滚动列表里必须有确定高度，否则整块不占位 */
   height: 88rpx;
   box-sizing: border-box;
   padding: 16rpx 24rpx;
+  /* 吸顶后挡住下方内容，颜色跟页面背景一致 */
+  background: var(--color-bg, #eef3ee);
 }
 
 .category__scroll {
