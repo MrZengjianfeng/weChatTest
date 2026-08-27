@@ -32,9 +32,7 @@ Component({
     // 首屏先出骨架，避免 observer 跑起来前闪「暂无游戏」
     isLoading: true,
     // 与真实格子同一套 class，条数跟 pageSize 对齐
-    skeletonList: [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-    ],
+    skeletonList: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   },
   observers: {
     gameLabelId(gameLabelId) {

@@ -2,6 +2,6 @@
   "component": true,
   "styleIsolation": "isolated",
   "usingComponents": {
-    "empty-state": "/components/empty-state/empty-state"
+    "no-data": "/components/no-data/no-data"
   }
 }
