@@ -1,0 +1,8 @@
+<view class="empty-state">
+  <image
+    class="empty-state__image"
+    src="/assets/images/no-result/no-records-yet.png"
+    mode="aspectFit"
+  />
+  <text class="empty-state__text">No Records Yet</text>
+</view>

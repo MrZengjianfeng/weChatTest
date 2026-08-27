@@ -1,0 +1,8 @@
+<view class="no-data">
+  <image
+    class="no-data__image"
+    src="/assets/images/no-result/no_data_available.png"
+    mode="aspectFit"
+  />
+  <text class="no-data__text">No Data Available</text>
+</view>

@@ -1,0 +1,8 @@
+<view class="no-results-found">
+  <image
+    class="no-results-found__image"
+    src="/assets/images/no-result/no-results-found.png"
+    mode="aspectFit"
+  />
+  <text class="no-results-found__text">No Results Found</text>
+</view>

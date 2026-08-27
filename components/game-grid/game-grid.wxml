@@ -27,6 +27,4 @@
     <text wx:elif="{{!hasMore}}" class="game-grid-status__text">没有更多了</text>
   </view>
 </block>
-<view class="empty" wx:else>
-  <text class="empty__text">暂无游戏</text>
-</view>
+<empty-state wx:else></empty-state>

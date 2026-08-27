@@ -1,0 +1,23 @@
+.empty-state {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 48rpx;
+  box-sizing: border-box;
+}
+
+.empty-state__image {
+  width: 400rpx;
+  height: 400rpx;
+}
+
+.empty-state__text {
+  margin-top: 24rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+  line-height: 1.4;
+}
