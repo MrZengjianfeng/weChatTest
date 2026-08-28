@@ -17,8 +17,29 @@
   "compileType": "miniprogram",
   "simulatorPluginLibVersion": {},
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": ".git"
+      },
+      {
+        "type": "folder",
+        "value": ".cursor"
+      },
+      {
+        "type": "folder",
+        "value": "docs"
+      }
+    ],
     "include": []
+  },
+  "watchOptions": {
+    "ignore": [
+      ".git/**",
+      ".cursor/**",
+      "docs/**",
+      "**/node_modules/**"
+    ]
   },
   "appid": "wx2ebb7fa04e9b3b07",
   "editorSetting": {}
