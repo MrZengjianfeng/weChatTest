@@ -5,6 +5,7 @@
   - navigation-bar：自定义导航，深色底避开右侧胶囊，无返回键
   - notice-marquee：模块1，page 的 flex 子项，始终贴在导航下方
   - auth-bar：模块7，absolute 叠在 page 底部，未登录才渲染
+  - login-sheet：登录弹窗，absolute 铺满 page，点 Login 后打开
 
   【滚动层】
   加载中用 type="list" 只渲染骨架。
@@ -128,7 +129,14 @@
 </scroll-view>
 
 <!--
-  模块7：未登录才挂载。事件只抛 login / register，路由由页面写。
+  模块7：未登录才挂载。事件只抛 login / register。
+  Login 打开 login-sheet；Register 仍由页面跳注册页。
   定位打在页面 WXSS 的 auth-bar 宿主上（组件 isolation，内部 position 无效）。
 -->
 <auth-bar wx:if="{{!isLoggedIn}}" bind:login="onTapLogin" bind:register="onTapRegister"></auth-bar>
+
+<!--
+  登录底栏弹窗。宿主铺满 page（见 index.wxss），内部遮罩/面板才有参照。
+  关闭只抛 close，visible 由本页控制。
+-->
+<login-sheet visible="{{isLoginVisible}}" bind:close="onCloseLogin"></login-sheet>

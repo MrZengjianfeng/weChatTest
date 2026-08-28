@@ -20,9 +20,10 @@
  * 5 category-tabs    change → { id } → onChangeCategory（受控）
  * 6 game-grid        select → { id } → onSelectGame
  *                    下拉刷新 / 上拉翻页由里层 scroll-view 转发 refresh / loadMore
- * 7 auth-bar         login / register → 登录页 / 注册页
+ * 7 auth-bar         login → 打开 login-sheet；register → 注册页
+ *   login-sheet      close → 收起弹窗；密码 / 验证码切换在组件内
  *
- * 鉴权：轮播、快捷入口、游戏点击走 _guardAuth；未登录跳 ROUTES.LOGIN。
+ * 鉴权：轮播、快捷入口、游戏点击走 _guardAuth；未登录打开登录弹窗。
  * 搜索、分类切换不拦登录。
  *
  * 滚动：真实内容用 scroll-view type="nested"。
@@ -74,6 +75,8 @@ Page({
     gridHeight: 0,
     /** 里层 scroll-view 下拉刷新动画开关，请求结束后必须关掉 */
     isGridRefreshing: false,
+    /** 登录底栏弹窗显隐；点 Login 或未登录拦截时打开 */
+    isLoginVisible: false,
   },
 
   onLoad() {
@@ -180,7 +183,11 @@ Page({
   },
 
   onTapLogin() {
-    wx.navigateTo({ url: ROUTES.LOGIN });
+    this.setData({ isLoginVisible: true });
+  },
+
+  onCloseLogin() {
+    this.setData({ isLoginVisible: false });
   },
 
   onTapRegister() {
@@ -268,11 +275,11 @@ Page({
 
   /**
    * 需要登录才能继续的操作统一走这里。
-   * 已登录返回 true；未登录跳登录页并返回 false，调用方必须提前 return。
+   * 已登录返回 true；未登录打开登录弹窗并返回 false，调用方必须提前 return。
    */
   _guardAuth() {
     if (this.data.isLoggedIn) return true;
-    wx.navigateTo({ url: ROUTES.LOGIN });
+    this.setData({ isLoginVisible: true });
     return false;
   },
 });

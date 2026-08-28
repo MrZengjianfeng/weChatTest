@@ -1,0 +1,97 @@
+<view
+  wx:if="{{visible}}"
+  class="login-sheet"
+  catch:touchmove="onPreventMove"
+>
+  <view class="login-sheet__mask" bind:tap="onTapClose"></view>
+  <view class="login-sheet__close" catch:tap="onTapClose">
+    <image
+      class="login-sheet__close-icon"
+      src="/assets/icons/close-white.svg"
+      mode="aspectFit"
+    />
+  </view>
+  <view class="login-sheet__panel">
+    <view class="login-sheet__handle"></view>
+
+    <view class="login-sheet__header">
+      <view class="login-sheet__back" bind:tap="onTapClose">
+        <image
+          class="login-sheet__back-icon"
+          src="/assets/icons/back.svg"
+          mode="aspectFit"
+        />
+      </view>
+      <text class="login-sheet__title">Login</text>
+    </view>
+
+    <view class="login-sheet__field">
+      <text class="login-sheet__label">Phone number</text>
+      <view class="login-sheet__input-wrap">
+        <text class="login-sheet__prefix">+92</text>
+        <view class="login-sheet__divider"></view>
+        <input
+          class="login-sheet__input"
+          type="digit"
+          maxlength="11"
+          value="{{phone}}"
+          bindinput="onInputPhone"
+        />
+      </view>
+    </view>
+
+    <view class="login-sheet__field">
+      <view class="login-sheet__label-row">
+        <text class="login-sheet__label">{{isCodeLogin ? 'SMS verification code' : 'Password'}}</text>
+        <text class="login-sheet__switch" bind:tap="onTapSwitchMode">{{isCodeLogin ? 'Password login' : 'Code login'}}</text>
+      </view>
+
+      <view wx:if="{{!isCodeLogin}}" class="login-sheet__input-wrap">
+        <image
+          class="login-sheet__icon"
+          src="/assets/icons/lock.svg"
+          mode="aspectFit"
+        />
+        <input
+          class="login-sheet__input"
+          password="{{!isPasswordVisible}}"
+          maxlength="32"
+          value="{{password}}"
+          bindinput="onInputPassword"
+        />
+        <view class="login-sheet__eye" bind:tap="onTapTogglePassword">
+          <image
+            class="login-sheet__icon"
+            src="/assets/icons/eyes-1.svg"
+            mode="aspectFit"
+          />
+        </view>
+      </view>
+
+      <view wx:else class="login-sheet__input-wrap">
+        <image
+          class="login-sheet__icon"
+          src="/assets/icons/message.svg"
+          mode="aspectFit"
+        />
+        <input
+          class="login-sheet__input"
+          type="digit"
+          maxlength="6"
+          value="{{smsCode}}"
+          bindinput="onInputCode"
+        />
+        <text class="login-sheet__send">Send Code</text>
+      </view>
+    </view>
+
+    <text class="login-sheet__agree">I am over 18 years old and agree to the User Agreement and Bonus Rules.</text>
+
+    <view class="login-sheet__btn">Login</view>
+
+    <view class="login-sheet__footer">
+      <text class="login-sheet__link">Custom Service</text>
+      <text class="login-sheet__link">Forget Password</text>
+    </view>
+  </view>
+</view>

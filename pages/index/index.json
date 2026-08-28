@@ -7,7 +7,8 @@
     "shortcut-entry": "/components/shortcut-entry/shortcut-entry",
     "category-tabs": "/components/category-tabs/category-tabs",
     "game-grid": "/components/game-grid/game-grid",
-    "auth-bar": "/components/auth-bar/auth-bar"
+    "auth-bar": "/components/auth-bar/auth-bar",
+    "login-sheet": "/components/login-sheet/login-sheet"
   },
   "navigationBarTextStyle": "white"
 }

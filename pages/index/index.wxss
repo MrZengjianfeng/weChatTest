@@ -230,3 +230,17 @@ auth-bar {
   bottom: 0;
   z-index: 20;
 }
+
+/*
+  登录弹窗宿主铺满 page，未打开时 pointer-events: none 不挡首页点击。
+  打开后内部 .login-sheet 再开 pointer-events。
+*/
+login-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 40;
+  pointer-events: none;
+}
