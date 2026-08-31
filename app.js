@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from './config/storage'
+import { getToken } from './utils/auth'
 
 App({
   globalData: {
@@ -6,7 +6,6 @@ App({
     isLoggedIn: false,
   },
   onLaunch() {
-    const token = wx.getStorageSync(STORAGE_KEYS.TOKEN)
-    this.globalData.isLoggedIn = !!token
+    this.globalData.isLoggedIn = !!getToken()
   },
 })

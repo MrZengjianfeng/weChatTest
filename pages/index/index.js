@@ -21,7 +21,7 @@
  * 6 game-grid        select → { id } → onSelectGame
  *                    下拉刷新 / 上拉翻页由里层 scroll-view 转发 refresh / loadMore
  * 7 auth-bar         login → 打开 login-sheet；register → 注册页
- *   login-sheet      close → 收起弹窗；密码 / 验证码切换在组件内
+ *   login-sheet      close → 收起弹窗并同步 isLoggedIn；密码 / 验证码 / 发码 / 登录在组件内
  *
  * 鉴权：轮播、快捷入口、游戏点击走 _guardAuth；未登录打开登录弹窗。
  * 搜索、分类切换不拦登录。
@@ -187,7 +187,12 @@ Page({
   },
 
   onCloseLogin() {
-    this.setData({ isLoginVisible: false });
+    const app = getApp();
+    const isLoggedIn = !!(app && app.globalData && app.globalData.isLoggedIn);
+    this.setData({
+      isLoginVisible: false,
+      isLoggedIn,
+    });
   },
 
   onTapRegister() {

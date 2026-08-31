@@ -1,9 +1,28 @@
+<!--
+  首页登录底栏弹窗
+
+  层级（从上到下叠）：半透明遮罩 → 面板上方的关闭按钮 → 白色圆角面板。
+  根节点 position:absolute 铺满父级 page；父级 login-sheet 默认 pointer-events:none，
+  打开后由本组件根节点重新开启点击。
+
+  visible=false 用 wx:if 整块卸掉（不是 hidden）：关闭后不能挡住首页点击，
+  也不必保留输入态（关闭时 JS 会 _resetForm）。
+
+  catch:touchmove 绑空方法，阻止滑动传到首页 nested 列表。
+  关闭用 catch:tap 的按钮不会把点击漏给遮罩再关一次；遮罩本身用 bind:tap。
+-->
 <view
   wx:if="{{visible}}"
   class="login-sheet"
   catch:touchmove="onPreventMove"
 >
+  <!-- 半透明遮罩：点空白处关闭。铺满根节点，面板 z-index 更高盖在上面 -->
   <view class="login-sheet__mask" bind:tap="onTapClose"></view>
+
+  <!--
+    面板外右上角关闭。catch:tap 避免点到按钮同时触发遮罩 tap。
+    相对根节点 flex 底对齐，所以视觉上贴在白色面板上方。
+  -->
   <view class="login-sheet__close" catch:tap="onTapClose">
     <image
       class="login-sheet__close-icon"
@@ -11,9 +30,13 @@
       mode="aspectFit"
     />
   </view>
+
+  <!-- 白色底栏面板：圆角、底部安全区；点击不会关弹窗（没绑 tap） -->
   <view class="login-sheet__panel">
+    <!-- 顶部拖动条样式，仅装饰，暂不支持手势下滑关闭 -->
     <view class="login-sheet__handle"></view>
 
+    <!-- 标题栏：返回与面板外关闭按钮效果相同，都抛 close -->
     <view class="login-sheet__header">
       <view class="login-sheet__back" bind:tap="onTapClose">
         <image
@@ -25,9 +48,10 @@
       <text class="login-sheet__title">Login</text>
     </view>
 
+    <!-- 手机号：区号 +92 写死，仅数字，最长 11 位；空号点 Send Code 时 wrap 加红框 -->
     <view class="login-sheet__field">
       <text class="login-sheet__label">Phone number</text>
-      <view class="login-sheet__input-wrap">
+      <view class="login-sheet__input-wrap {{isPhoneError ? 'login-sheet__input-wrap--error' : ''}}">
         <text class="login-sheet__prefix">+92</text>
         <view class="login-sheet__divider"></view>
         <input
@@ -36,17 +60,23 @@
           maxlength="11"
           value="{{phone}}"
           bindinput="onInputPhone"
+          bindfocus="onFocusPhone"
         />
       </view>
     </view>
 
+    <!--
+      第二栏：默认验证码，点右侧文案切到密码。
+      标签和切换文案随 isCodeLogin 互斥显示；两种输入框用 wx:if / wx:else 二选一。
+    -->
     <view class="login-sheet__field">
       <view class="login-sheet__label-row">
         <text class="login-sheet__label">{{isCodeLogin ? 'SMS verification code' : 'Password'}}</text>
         <text class="login-sheet__switch" bind:tap="onTapSwitchMode">{{isCodeLogin ? 'Password login' : 'Code login'}}</text>
       </view>
 
-      <view wx:if="{{!isCodeLogin}}" class="login-sheet__input-wrap">
+      <!-- 密码：password 属性取反 isPasswordVisible；眼睛图标只切明文，不提交 -->
+      <view wx:if="{{!isCodeLogin}}" class="login-sheet__input-wrap {{isPasswordError ? 'login-sheet__input-wrap--error' : ''}}">
         <image
           class="login-sheet__icon"
           src="/assets/icons/lock.svg"
@@ -58,6 +88,7 @@
           maxlength="32"
           value="{{password}}"
           bindinput="onInputPassword"
+          bindfocus="onFocusPassword"
         />
         <view class="login-sheet__eye" bind:tap="onTapTogglePassword">
           <image
@@ -68,7 +99,8 @@
         </view>
       </view>
 
-      <view wx:else class="login-sheet__input-wrap">
+      <!-- 验证码：6 位数字；Send Code 先校验手机号再调 sendSms -->
+      <view wx:else class="login-sheet__input-wrap {{isCodeError ? 'login-sheet__input-wrap--error' : ''}}">
         <image
           class="login-sheet__icon"
           src="/assets/icons/message.svg"
@@ -78,17 +110,24 @@
           class="login-sheet__input"
           type="digit"
           maxlength="6"
-          value="{{smsCode}}"
+          value="{{verifyCode}}"
           bindinput="onInputCode"
+          bindfocus="onFocusCode"
         />
-        <text class="login-sheet__send">Send Code</text>
+        <text
+          class="login-sheet__send {{smsCountdown > 0 ? 'login-sheet__send--disabled' : ''}}"
+          bind:tap="onTapSendCode"
+        >{{smsCountdown > 0 ? smsCountdown + 's' : 'Send Code'}}</text>
       </view>
     </view>
 
+    <!-- 协议声明：文案占位，User Agreement / Bonus Rules 尚未绑跳转 -->
     <text class="login-sheet__agree">I am over 18 years old and agree to the User Agreement and Bonus Rules.</text>
 
-    <view class="login-sheet__btn">Login</view>
+    <!-- 登录：先校验必填，通过后调 login -->
+    <view class="login-sheet__btn {{isLoggingIn ? 'login-sheet__btn--disabled' : ''}}" bind:tap="onTapLogin">Login</view>
 
+    <!-- 底栏链接：客服、忘记密码，暂无 bind，跳转交给页面以后再接 -->
     <view class="login-sheet__footer">
       <text class="login-sheet__link">Custom Service</text>
       <text class="login-sheet__link">Forget Password</text>

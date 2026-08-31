@@ -40,10 +40,10 @@ export function getSetting() {
  * @returns 
  * let params = {
       login_type: loginType,// "code" | "password"
-      phone: values?.phone,
-      verify_code: values?.code,
-      invite_code: inviteCode,
-      password: values.password,
+      phone,
+      verify_code,
+      invite_code,
+      password,
       platform: "web",
       uuid,
       device_model: device_model,

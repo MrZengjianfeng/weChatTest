@@ -1,3 +1,12 @@
+/**
+ * 登录底栏弹窗样式
+ *
+ * 根节点 absolute 铺满父级 page，flex 底对齐：遮罩全屏，关闭按钮和面板贴底部。
+ * 颜色跟首页品牌绿（#0b4f36）和主按钮 --color-primary-dark；间距字号用 rpx。
+ * styleIsolation: isolated，这些类不会漏到页面，页面也不能直接改内部样式。
+ */
+
+/* 铺满 page；justify flex-end 让关闭按钮和面板靠底。pointer-events 打开后才能点 */
 .login-sheet {
   position: absolute;
   left: 0;
@@ -11,6 +20,7 @@
   pointer-events: auto;
 }
 
+/* 全屏半透明黑遮罩，点它关闭。absolute 铺满，不占 flex 高度 */
 .login-sheet__mask {
   position: absolute;
   left: 0;
@@ -20,6 +30,7 @@
   background: rgba(0, 0, 0, 0.45);
 }
 
+/* 面板外右上角关闭：相对根节点 flex 底对齐，所以出现在白面板上方 */
 .login-sheet__close {
   position: relative;
   z-index: 2;
@@ -37,6 +48,7 @@
   height: 32rpx;
 }
 
+/* 白面板：上圆角、底部安全区；overflow hidden 裁掉圆角外的内容 */
 .login-sheet__panel {
   position: relative;
   z-index: 1;
@@ -47,6 +59,7 @@
   padding: 12rpx 40rpx calc(28rpx + env(safe-area-inset-bottom));
 }
 
+/* 顶部装饰拖动条，居中，暂无手势 */
 .login-sheet__handle {
   width: 128rpx;
   height: 8rpx;
@@ -62,6 +75,7 @@
   margin-bottom: 40rpx;
 }
 
+/* 返回键固定点击热区，flex-shrink 避免被标题挤扁 */
 .login-sheet__back {
   width: 56rpx;
   height: 56rpx;
@@ -88,6 +102,7 @@
   margin-bottom: 28rpx;
 }
 
+/* 标签与「Password login / Code login」同一行两端对齐 */
 .login-sheet__label-row {
   display: flex;
   flex-direction: row;
@@ -112,6 +127,7 @@
   line-height: 34rpx;
 }
 
+/* 输入行：固定高度，左右图标/区号不压缩，中间 input 吃剩余宽度 */
 .login-sheet__input-wrap {
   height: 88rpx;
   padding: 0 24rpx;
@@ -121,6 +137,11 @@
   flex-direction: row;
   align-items: center;
   box-sizing: border-box;
+}
+
+/* 必填未填点 Send Code / Login：红框提示；聚焦后 class 去掉 */
+.login-sheet__input-wrap--error {
+  border-color: #e54545;
 }
 
 .login-sheet__prefix {
@@ -144,6 +165,7 @@
   flex-shrink: 0;
 }
 
+/* 眼睛热区比图标大一圈，方便点；右边距清掉，避免和 input 抢空间 */
 .login-sheet__eye {
   width: 56rpx;
   height: 56rpx;
@@ -158,6 +180,7 @@
   margin-right: 0;
 }
 
+/* min-width:0 让 flex 子项可以缩，长号码不会把右侧图标顶出框 */
 .login-sheet__input {
   flex: 1;
   height: 88rpx;
@@ -168,10 +191,18 @@
 
 .login-sheet__send {
   margin-left: 12rpx;
+  min-width: 140rpx;
   font-size: 26rpx;
   font-weight: 600;
   color: #0b4f36;
+  text-align: right;
   flex-shrink: 0;
+}
+
+/* 倒计时中不可点，灰色提示还要等多久 */
+.login-sheet__send--disabled {
+  color: #b0b0b0;
+  font-weight: 500;
 }
 
 .login-sheet__agree {
@@ -192,6 +223,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.login-sheet__btn--disabled {
+  opacity: 0.6;
 }
 
 .login-sheet__footer {
