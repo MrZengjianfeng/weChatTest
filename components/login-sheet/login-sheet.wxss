@@ -4,6 +4,8 @@
  * 根节点 absolute 铺满父级 page，flex 底对齐：遮罩全屏，关闭按钮和面板贴底部。
  * 颜色跟首页品牌绿（#0b4f36）和主按钮 --color-primary-dark；间距字号用 rpx。
  * styleIsolation: isolated，这些类不会漏到页面，页面也不能直接改内部样式。
+ *
+ * 交互态：--error 红框给必填空项；--disabled 给发码倒计时和登录请求中。
  */
 
 /* 铺满 page；justify flex-end 让关闭按钮和面板靠底。pointer-events 打开后才能点 */
@@ -68,6 +70,7 @@
   background: #1a1a1a;
 }
 
+/* 标题栏：返回键 + Login 文案同一行 */
 .login-sheet__header {
   display: flex;
   flex-direction: row;
@@ -225,6 +228,7 @@
   justify-content: center;
 }
 
+/* 登录请求进行中：半透明提示不可再点，真正防连点在 JS 的 isLoggingIn */
 .login-sheet__btn--disabled {
   opacity: 0.6;
 }

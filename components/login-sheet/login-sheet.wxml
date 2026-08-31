@@ -8,6 +8,9 @@
   visible=false 用 wx:if 整块卸掉（不是 hidden）：关闭后不能挡住首页点击，
   也不必保留输入态（关闭时 JS 会 _resetForm）。
 
+  必填校验：空字段给对应 input-wrap 加 --error 红框；该 input bindfocus 后去掉。
+  Send Code 倒计时中文案改成 Ns 并加 --disabled；Login 请求中按钮加 --disabled。
+
   catch:touchmove 绑空方法，阻止滑动传到首页 nested 列表。
   关闭用 catch:tap 的按钮不会把点击漏给遮罩再关一次；遮罩本身用 bind:tap。
 -->
@@ -48,7 +51,7 @@
       <text class="login-sheet__title">Login</text>
     </view>
 
-    <!-- 手机号：区号 +92 写死，仅数字，最长 11 位；空号点 Send Code 时 wrap 加红框 -->
+    <!-- 手机号：区号 +92 写死，仅数字，最长 11 位；空号点 Send Code / Login 时 wrap 加红框，聚焦清掉 -->
     <view class="login-sheet__field">
       <text class="login-sheet__label">Phone number</text>
       <view class="login-sheet__input-wrap {{isPhoneError ? 'login-sheet__input-wrap--error' : ''}}">
@@ -75,7 +78,7 @@
         <text class="login-sheet__switch" bind:tap="onTapSwitchMode">{{isCodeLogin ? 'Password login' : 'Code login'}}</text>
       </view>
 
-      <!-- 密码：password 属性取反 isPasswordVisible；眼睛图标只切明文，不提交 -->
+      <!-- 密码：password 属性取反 isPasswordVisible；眼睛只切明文。空密码点 Login 红框，聚焦清掉 -->
       <view wx:if="{{!isCodeLogin}}" class="login-sheet__input-wrap {{isPasswordError ? 'login-sheet__input-wrap--error' : ''}}">
         <image
           class="login-sheet__icon"
@@ -99,7 +102,7 @@
         </view>
       </view>
 
-      <!-- 验证码：6 位数字；Send Code 先校验手机号再调 sendSms -->
+      <!-- 验证码：6 位数字。Send Code 先校验手机号再发码，倒计时文案改 Ns；空码点 Login 红框，聚焦清掉 -->
       <view wx:else class="login-sheet__input-wrap {{isCodeError ? 'login-sheet__input-wrap--error' : ''}}">
         <image
           class="login-sheet__icon"
@@ -124,7 +127,7 @@
     <!-- 协议声明：文案占位，User Agreement / Bonus Rules 尚未绑跳转 -->
     <text class="login-sheet__agree">I am over 18 years old and agree to the User Agreement and Bonus Rules.</text>
 
-    <!-- 登录：先校验必填，通过后调 login -->
+    <!-- 登录：先校验当前模式必填，通过后调 login；请求中半透明，避免连点 -->
     <view class="login-sheet__btn {{isLoggingIn ? 'login-sheet__btn--disabled' : ''}}" bind:tap="onTapLogin">Login</view>
 
     <!-- 底栏链接：客服、忘记密码，暂无 bind，跳转交给页面以后再接 -->

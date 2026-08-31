@@ -1,27 +1,36 @@
 /**
  * 首页登录底栏弹窗（components/login-sheet）
  *
- * 职责：从底部弹出登录表单，做登录方式切换、本地输入、发送验证码、登录请求。
- * 显隐、跳客服 / 忘记密码都交给页面；本组件抛 close。
+ * 职责：底栏登录表单。方式切换、输入、发验证码、登录请求都在组件内；
+ * 显隐由页面的 visible 控制；关闭只抛 close，不自己改这个值。
+ * 客服 / 忘记密码 / 用户协议只有 UI，跳转仍交给页面。
  *
  * 数据流：
  * 1. 页面把 isLoginVisible 绑到 visible；true 时 WXML 才渲染整块弹层。
- * 2. 用户在组件内改手机号、密码、验证码；切模式、看密码明文都只改本组件 data。
- * 3. 点 Send Code → 校验手机号后调 sendSms；空号给手机号框加红框，聚焦后去掉。
- *    发送成功后 60 秒倒计时，倒计时期间不能再发。
- * 4. 点 Login → 手机号必填；验证码登录还要验证码，密码登录还要密码。缺项红框，聚焦后去掉。
- *    校验通过后调 login；成功写 token / 登录态并抛 close，页面收起弹窗并藏 auth-bar。
- * 5. 点遮罩 / 面板外关闭按钮 / 标题栏返回 → triggerEvent('close')，页面把 visible 改回 false。
- * 6. visible 从 true 变 false 时 observer 调 _resetForm，下次打开回到验证码登录、空表单。
+ * 2. 手机号 / 密码 / 验证码、登录方式、密码明文只存在本组件 data，页面不持有表单。
+ * 3. Send Code → sendSms({ phone })。手机号必填，空则红框；该框聚焦后去掉。
+ *    成功后 60 秒倒计时（smsCountdown），文案变成 Ns，期间不能再发。
+ *    定时器挂在实例 _smsTimer 上，不进 data；关闭弹窗和 detached 都要清掉。
+ * 4. Login → login({ login_type: "code"|"password", phone, verify_code|password, 设备字段 })。
+ *    手机号始终必填；验证码登录还要验证码，密码登录还要密码。缺项只红框、不请求；聚焦后去掉。
+ *    设备字段目前用 DEVICE_HEADERS 的联调值（platform / uuid / device_model / system_version / screen_size）。
+ *    没有邀请码入口，不传 invite_code。
+ * 5. 登录成功：pickToken 抽出 token → setToken 写入本地 → globalData.isLoggedIn = true → 抛 close。
+ *    之后其它接口走 utils/request 会自动带 Authorization / token。拿不到 token 视为失败，弹窗不关。
+ * 6. 点遮罩 / 面板外关闭 / 标题栏返回 / 登录成功 → close。
+ *    页面把 visible 改回 false，并按 globalData 同步 isLoggedIn（收起 auth-bar）。
+ * 7. visible 变 false：observer 调 _resetForm，下次打开回到验证码登录、空表单、无倒计时。
+ *    不要在 onTapClose 里提前清：页面改 visible 会再走一遍 observer。
+ * 8. 发码 / 登录请求回来时若弹窗已关，不再 Toast、写 token、开倒计时。
  *
  * properties：
  * - visible {Boolean} 默认 false。页面控制；组件不自己改这个值。
  *
  * 事件：
- * - close：无 detail。点遮罩、关闭按钮、返回键，以及登录成功后抛出。
+ * - close：无 detail。点遮罩、关闭按钮、返回键，以及登录成功写完 token 后抛出。
  *
  * 当前未接线（有 UI，无事件）：
- * 客服、忘记密码、用户协议。等接口和路由就绪再接到页面。
+ * 客服、忘记密码、用户协议。
  *
  * 滚动：根节点 catch:touchmove 空处理，挡住底层首页 nested 列表被拖动。
  */
@@ -29,6 +38,7 @@ import { sendSms, login } from "../../services/api";
 import { DEVICE_HEADERS } from "../../config/headers";
 import { pickToken, setToken } from "../../utils/auth";
 
+/** 发码成功后的冷却秒数；与文案「Ns」一致 */
 const SMS_COUNTDOWN_SECONDS = 60;
 
 Component({
@@ -82,6 +92,7 @@ Component({
     smsCountdown: 0,
   },
   lifetimes: {
+    /** 组件从页面卸掉时清倒计时，避免 interval 在后台空转 */
     detached() {
       this._clearSmsCountdown();
     },
@@ -102,6 +113,7 @@ Component({
      * 密码登录 ↔ 验证码登录。
      * 只翻转 isCodeLogin，不清空已填的手机号 / 密码 / 验证码，方便来回对比。
      * isPasswordVisible 关掉，避免切回密码时仍是明文。
+     * 顺手清掉密码 / 验证码红框：切走再切回来时 wx:if 会重建输入行，残留 error 会闪红。
      */
     onTapSwitchMode() {
       this.setData({
@@ -119,6 +131,7 @@ Component({
       });
     },
 
+    /** 只同步手机号；长度交给 maxlength，空号校验放在 Send Code / Login */
     onInputPhone(e) {
       this.setData({ phone: e.detail.value });
     },
@@ -130,20 +143,24 @@ Component({
       }
     },
 
+    /** 只同步密码明文；空密码校验放在 Login */
     onInputPassword(e) {
       this.setData({ password: e.detail.value });
     },
 
+    /** 密码框获焦：清掉必填红框 */
     onFocusPassword() {
       if (this.data.isPasswordError) {
         this.setData({ isPasswordError: false });
       }
     },
 
+    /** 只同步验证码；长度交给 maxlength，空码校验放在 Login */
     onInputCode(e) {
       this.setData({ verifyCode: e.detail.value });
     },
 
+    /** 验证码框获焦：清掉必填红框 */
     onFocusCode() {
       if (this.data.isCodeError) {
         this.setData({ isCodeError: false });
@@ -151,8 +168,9 @@ Component({
     },
 
     /**
-     * 发送验证码。倒计时中直接忽略；手机号必填：空则红框，不发请求。
-     * 请求失败用 Toast，不改输入框样式；成功才开 60 秒倒计时。
+     * 发送验证码。倒计时中或请求中直接忽略，避免连点。
+     * 手机号必填：空则红框，不发请求。失败 Toast，不改输入框样式；成功才开 60 秒倒计时。
+     * 回来时若弹窗已关，不再 Toast / 开倒计时。
      */
     async onTapSendCode() {
       if (this.data.smsCountdown > 0 || this.data.isSendingCode) {
@@ -184,8 +202,10 @@ Component({
     },
 
     /**
-     * 登录。手机号始终必填；验证码登录还要验证码，密码登录还要密码。
-     * 缺项只标红框、不请求；失败 Toast；成功写登录态后抛 close。
+     * 登录。请求中忽略连点。
+     * 手机号始终必填；验证码登录还要验证码，密码登录还要密码。缺项一起标红、不请求。
+     * 设备字段跟登录接口约定走 DEVICE_HEADERS 联调值。
+     * 失败 Toast；成功必须落到 token，再写登录态并抛 close。弹窗已关则丢弃结果。
      */
     async onTapLogin() {
       if (this.data.isLoggingIn) {
@@ -243,7 +263,12 @@ Component({
       }
     },
 
-    /** 把登录返回的 token 写入本地；之后所有走 request 的接口都会带上。没拿到 token 视为失败。 */
+    /**
+     * 从登录返回里抽出 token 写入本地（utils/auth.setToken）。
+     * 兼容 token / access_token，以及顶层、data、user。
+     * 同时把 globalData.isLoggedIn 打成 true，首页 close 时才能收起 auth-bar。
+     * 抽不出 token 返回 false，调用方当失败，避免「看起来已登录、后续接口没票」。
+     */
     _persistSession(result) {
       const token = pickToken(result);
       if (!token) {
@@ -257,7 +282,7 @@ Component({
       return true;
     },
 
-    /** 从 60 秒往下减，到 0 清定时器并恢复 Send Code */
+    /** 先清旧 interval，再从 60 秒往下减；到 0 恢复 Send Code */
     _startSmsCountdown() {
       this._clearSmsCountdown();
       this.setData({ smsCountdown: SMS_COUNTDOWN_SECONDS });
@@ -272,6 +297,7 @@ Component({
       }, 1000);
     },
 
+    /** 清掉 _smsTimer。关弹窗、卸组件、倒计时结束、重新开倒计时都会走到这里 */
     _clearSmsCountdown() {
       if (this._smsTimer) {
         clearInterval(this._smsTimer);
@@ -280,7 +306,7 @@ Component({
     },
 
     /**
-     * 关闭时清空全部表单字段，并回到验证码登录。
+     * 关闭时清空表单、红框、发送/登录锁，并清倒计时、回到验证码登录。
      * 由 visible observer 调用，不要在 onTapClose 里提前清：页面改 visible 会再走一遍 observer。
      */
     _resetForm() {
