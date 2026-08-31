@@ -9,7 +9,7 @@
   也不必保留输入态（关闭时 JS 会 _resetForm）。
 
   必填校验：空字段给对应 input-wrap 加 --error 红框；该 input bindfocus 后去掉。
-  Send Code 倒计时中文案改成 Ns 并加 --disabled；Login 请求中按钮加 --disabled。
+  Send Code 发码中按钮转圈，倒计时中文案改成 Ns 并加 --disabled；Login 请求中按钮加 --disabled。
 
   catch:touchmove 绑空方法，阻止滑动传到首页 nested 列表。
   关闭用 catch:tap 的按钮不会把点击漏给遮罩再关一次；遮罩本身用 bind:tap。
@@ -102,7 +102,7 @@
         </view>
       </view>
 
-      <!-- 验证码：6 位数字。Send Code 先校验手机号再发码，倒计时文案改 Ns；空码点 Login 红框，聚焦清掉 -->
+      <!-- 验证码：6 位数字。Send Code 先校验手机号再发码；发码中按钮转圈，成功改 Ns，失败仍是 Send Code；空码点 Login 红框，聚焦清掉 -->
       <view wx:else class="login-sheet__input-wrap {{isCodeError ? 'login-sheet__input-wrap--error' : ''}}">
         <image
           class="login-sheet__icon"
@@ -117,10 +117,13 @@
           bindinput="onInputCode"
           bindfocus="onFocusCode"
         />
-        <text
+        <view
           class="login-sheet__send {{smsCountdown > 0 ? 'login-sheet__send--disabled' : ''}}"
           bind:tap="onTapSendCode"
-        >{{smsCountdown > 0 ? smsCountdown + 's' : 'Send Code'}}</text>
+        >
+          <view wx:if="{{isSendingCode}}" class="login-sheet__send-loading"></view>
+          <text wx:else>{{smsCountdown > 0 ? smsCountdown + 's' : 'Send Code'}}</text>
+        </view>
       </view>
     </view>
 

@@ -8,8 +8,8 @@
  * 数据流：
  * 1. 页面把 isLoginVisible 绑到 visible；true 时 WXML 才渲染整块弹层。
  * 2. 手机号 / 密码 / 验证码、登录方式、密码明文只存在本组件 data，页面不持有表单。
- * 3. Send Code → sendSms({ phone })。手机号必填，空则红框；该框聚焦后去掉。
- *    成功后 60 秒倒计时（smsCountdown），文案变成 Ns，期间不能再发。
+ * 3. Send Code → 先校验手机号（空则红框、不 loading、不请求）。通过后按钮转圈（isSendingCode），
+ *    再 sendSms({ phone })。成功失败都关掉转圈：成功开 60 秒倒计时（文案 Ns），失败仍显示 Send Code。
  *    定时器挂在实例 _smsTimer 上，不进 data；关闭弹窗和 detached 都要清掉。
  * 4. Login → login({ login_type: "code"|"password", phone, verify_code|password, 设备字段 })。
  *    手机号始终必填；验证码登录还要验证码，密码登录还要密码。缺项只红框、不请求；聚焦后去掉。
@@ -84,7 +84,7 @@ Component({
     isPasswordError: false,
     /** 验证码登录点 Login 且验证码为空时为 true；聚焦后清掉 */
     isCodeError: false,
-    /** 发送验证码进行中，防止连点重复请求 */
+    /** 发送验证码进行中：按钮转圈，同时防止连点重复请求 */
     isSendingCode: false,
     /** 登录请求进行中，防止连点重复提交 */
     isLoggingIn: false,
@@ -169,7 +169,8 @@ Component({
 
     /**
      * 发送验证码。倒计时中或请求中直接忽略，避免连点。
-     * 手机号必填：空则红框，不发请求。失败 Toast，不改输入框样式；成功才开 60 秒倒计时。
+     * 手机号必填：空则红框，不 loading、不请求。通过后先等按钮转圈画上，再发码。
+     * 成功失败都关转圈：失败 Toast 并仍显示 Send Code；成功才开 60 秒倒计时。
      * 回来时若弹窗已关，不再 Toast / 开倒计时。
      */
     async onTapSendCode() {
@@ -183,7 +184,9 @@ Component({
         return;
       }
 
-      this.setData({ isSendingCode: true, isPhoneError: false });
+      await new Promise((resolve) => {
+        this.setData({ isSendingCode: true, isPhoneError: false }, resolve);
+      });
       try {
         await sendSms({ phone });
         if (!this.properties.visible) {
@@ -192,12 +195,17 @@ Component({
         wx.showToast({ title: "Code sent", icon: "none" });
         this._startSmsCountdown();
       } catch (err) {
+        if (!this.properties.visible) {
+          return;
+        }
         wx.showToast({
           title: err.message || "Failed to send code",
           icon: "none",
         });
       } finally {
-        this.setData({ isSendingCode: false });
+        if (this.properties.visible) {
+          this.setData({ isSendingCode: false });
+        }
       }
     },
 
