@@ -8,6 +8,11 @@ page {
   --color-bg: #eef3ee;
   --color-surface: #ffffff;
   --color-border: #d4e8d8;
+  --color-gold-text: #6b3d08;
+  --color-wallet-bg: #c5e8cb;
+  --color-profile-sheet: #f4f6f5;
+  --color-logout-bg: #efcbcb;
+  --color-logout-text: #b44a56;
   --font-size-title: 32rpx;
   --font-size-body: 28rpx;
   /* 白条 ~100rpx + 转盘凸出 ~72rpx + 安全区；列表底部用这个避开 TabBar */

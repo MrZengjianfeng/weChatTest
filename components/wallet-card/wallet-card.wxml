@@ -1,0 +1,13 @@
+<view class="wallet-card">
+  <view class="wallet-card__head">
+    <text class="wallet-card__title">{{title}}</text>
+    <view class="wallet-card__action">
+      <image
+        class="wallet-card__action-icon"
+        src="/assets/icons/wallet.svg"
+        mode="aspectFit"
+      />
+    </view>
+  </view>
+  <text class="wallet-card__amount">{{amount}}</text>
+</view>

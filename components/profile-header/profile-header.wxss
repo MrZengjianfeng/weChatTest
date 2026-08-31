@@ -1,0 +1,65 @@
+.profile-header {
+  padding: 16rpx 32rpx 96rpx;
+  background: var(--color-primary-deep);
+}
+
+.profile-header__user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.profile-header__avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
+  border: 3rpx solid rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+  background: #4e9a6e;
+}
+
+.profile-header__meta {
+  flex: 1;
+  margin-left: 24rpx;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-header__name {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-header__id-row {
+  margin-top: 8rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.profile-header__id {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.3;
+}
+
+.profile-header__copy {
+  width: 28rpx;
+  height: 28rpx;
+  margin-left: 10rpx;
+  flex-shrink: 0;
+}
+
+.profile-header__support {
+  width: 48rpx;
+  height: 48rpx;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}

@@ -1,0 +1,119 @@
+.vip-card {
+  padding: 28rpx 20rpx 20rpx;
+  border-radius: 32rpx;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f6d78a 0%, #e8b54a 52%, #d19a1c 100%);
+  box-shadow: 0 8rpx 24rpx rgba(180, 120, 20, 0.16);
+}
+
+.vip-card__top {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0 8rpx;
+}
+
+.vip-card__level {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin-right: 24rpx;
+}
+
+.vip-card__level-text {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: var(--color-gold-text);
+  line-height: 1.1;
+  letter-spacing: 2rpx;
+}
+
+.vip-card__stars {
+  margin-top: 16rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.vip-card__star {
+  width: 20rpx;
+  height: 20rpx;
+  margin-right: 10rpx;
+}
+
+.vip-card__progress {
+  padding-top: 4rpx;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.vip-card__progress-text {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: var(--color-gold-text);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.vip-card__track {
+  width: 100%;
+  height: 8rpx;
+  margin-top: 10rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.vip-card__fill {
+  height: 100%;
+  border-radius: 8rpx;
+  background: var(--color-gold-text);
+}
+
+.vip-card__features {
+  margin-top: 24rpx;
+  width: 100%;
+  height: 166rpx;
+}
+
+.vip-card__feature {
+  width: 176rpx;
+  margin-right: 10rpx;
+  padding: 16rpx 16rpx 14rpx;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.32);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.vip-card__feature:last-child {
+  margin-right: 0;
+}
+
+.vip-card__feature-icon {
+  width: 44rpx;
+  height: 44rpx;
+}
+
+.vip-card__feature-title {
+  margin-top: 8rpx;
+  min-height: 56rpx;
+  padding: 0 4rpx;
+  font-size: 18rpx;
+  font-weight: 600;
+  color: var(--color-gold-text);
+  text-align: center;
+  line-height: 1.25;
+  box-sizing: border-box;
+}
+
+.vip-card__feature-value {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+  color: var(--color-gold-text);
+  line-height: 1.2;
+}

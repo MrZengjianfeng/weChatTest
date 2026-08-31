@@ -1,8 +1,36 @@
-<!-- 个人中心占位页：登录后 TabBar Profile -->
-<navigation-bar title="{{title}}" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<!--
+  个人中心（仅样式，点击/复制/跳转后续再接）
+
+  固定层：navigation-bar 深绿空标题避开胶囊；tab-bar Profile 高亮。
+  滚动层：头部绿底 + VIP 金卡叠在绿底下沿，下面钱包卡、菜单和退出按钮。
+-->
+<navigation-bar title="" back="{{false}}" color="#FFFFFF" background="#006C41"></navigation-bar>
 <scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container container--tab">
-    <text class="hint">个人中心将在后续接入</text>
+  <view class="profile">
+    <profile-header
+      avatar="{{avatar}}"
+      name="{{name}}"
+      user-id="{{userId}}"
+    ></profile-header>
+    <view class="profile__body">
+      <vip-card
+        level="{{vipLevel}}"
+        current-text="{{vipCurrentText}}"
+        target-text="{{vipTargetText}}"
+        progress="{{vipProgress}}"
+        features="{{vipFeatures}}"
+      ></vip-card>
+      <wallet-card title="{{walletTitle}}" amount="{{walletAmount}}"></wallet-card>
+      <profile-menu list="{{menuList}}"></profile-menu>
+      <view
+        class="profile__logout"
+        hover-class="profile__logout--active"
+        hover-stay-time="80"
+        bind:tap="onTapLogout"
+      >
+        Log Out
+      </view>
+    </view>
   </view>
 </scroll-view>
 <tab-bar active="profile"></tab-bar>

@@ -1,0 +1,22 @@
+<view class="profile-menu">
+  <view class="profile-menu__item" wx:for="{{list}}" wx:key="id">
+    <image class="profile-menu__icon" src="{{item.icon}}" mode="aspectFit" />
+    <text class="profile-menu__title">{{item.title}}</text>
+    <view class="profile-menu__socials" wx:if="{{item.hasSocials}}">
+      <image
+        class="profile-menu__social"
+        wx:for="{{item.socials}}"
+        wx:for-item="social"
+        wx:key="id"
+        src="{{social.icon}}"
+        mode="aspectFit"
+      />
+    </view>
+    <text wx:if="{{item.extra}}" class="profile-menu__extra">{{item.extra}}</text>
+    <image
+      class="profile-menu__arrow"
+      src="/assets/icons/arrow-right-grey.svg"
+      mode="aspectFit"
+    />
+  </view>
+</view>

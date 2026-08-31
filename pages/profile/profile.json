@@ -1,7 +1,11 @@
 {
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar",
-    "tab-bar": "/components/tab-bar/tab-bar"
+    "tab-bar": "/components/tab-bar/tab-bar",
+    "profile-header": "/components/profile-header/profile-header",
+    "vip-card": "/components/vip-card/vip-card",
+    "wallet-card": "/components/wallet-card/wallet-card",
+    "profile-menu": "/components/profile-menu/profile-menu"
   },
-  "navigationBarTextStyle": "black"
+  "navigationBarTextStyle": "white"
 }

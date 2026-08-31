@@ -1,0 +1,26 @@
+<!-- 深绿顶栏用户信息；底部多留一截给 VIP 卡叠上来 -->
+<view class="profile-header">
+  <view class="profile-header__user">
+    <image
+      class="profile-header__avatar"
+      src="{{avatar}}"
+      mode="aspectFill"
+    />
+    <view class="profile-header__meta">
+      <text class="profile-header__name">{{name}}</text>
+      <view class="profile-header__id-row">
+        <text class="profile-header__id">ID: {{userId}}</text>
+        <image
+          class="profile-header__copy"
+          src="/assets/icons/copy.svg"
+          mode="aspectFit"
+        />
+      </view>
+    </view>
+    <image
+      class="profile-header__support"
+      src="/assets/icons/kefu.svg"
+      mode="aspectFit"
+    />
+  </view>
+</view>

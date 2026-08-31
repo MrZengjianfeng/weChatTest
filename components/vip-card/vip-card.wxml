@@ -1,0 +1,44 @@
+<view class="vip-card">
+  <view class="vip-card__top">
+    <view class="vip-card__level">
+      <text class="vip-card__level-text">{{level}}</text>
+      <view class="vip-card__stars">
+        <image
+          class="vip-card__star"
+          src="/assets/icons/star-gold.svg"
+          mode="aspectFit"
+        />
+        <image
+          class="vip-card__star"
+          src="/assets/icons/star-gold.svg"
+          mode="aspectFit"
+        />
+        <image
+          class="vip-card__star"
+          src="/assets/icons/star-gold.svg"
+          mode="aspectFit"
+        />
+      </view>
+    </view>
+    <view class="vip-card__progress">
+      <text class="vip-card__progress-text">{{currentText}} / {{targetText}}</text>
+      <view class="vip-card__track">
+        <view class="vip-card__fill" style="width: {{progress}}%;"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Skyline 横向 scroll-view 必须带 type，子节点直接作为列表项 -->
+  <scroll-view
+    class="vip-card__features"
+    type="list"
+    scroll-x
+    show-scrollbar="{{false}}"
+  >
+    <view class="vip-card__feature" wx:for="{{features}}" wx:key="id">
+      <image class="vip-card__feature-icon" src="{{item.icon}}" mode="aspectFit" />
+      <text class="vip-card__feature-title">{{item.title}}</text>
+      <text class="vip-card__feature-value">{{item.value}}</text>
+    </view>
+  </scroll-view>
+</view>
