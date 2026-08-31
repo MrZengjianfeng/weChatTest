@@ -11,7 +11,7 @@
  * - refresh() 下拉刷新，重置到第 1 页
  * - loadMore() 上拉加载下一页；请求中再次上拉会被忽略
  */
-import { getGames } from "../../services/game";
+import { getGames } from "../../services/api";
 
 Component({
   options: {

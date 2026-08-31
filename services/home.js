@@ -8,7 +8,7 @@
  * - shortcuts[] { id, label, icon, theme, badge }
  * - categories[] { id, name, icon }  icon 为远程图地址
  */
-import { getSetting } from "./setting";
+import { getSetting } from "./api";
 
 const NOTICE_TEXT =
   "Welcome Bonus: Deposit PKR 500 get PKR 1,500 FREE · New Slots Added..";
