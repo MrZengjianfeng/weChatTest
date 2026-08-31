@@ -15,10 +15,10 @@
  *    手机号始终必填；验证码登录还要验证码，密码登录还要密码。缺项只红框、不请求；聚焦后去掉。
  *    设备字段目前用 DEVICE_HEADERS 的联调值（platform / uuid / device_model / system_version / screen_size）。
  *    没有邀请码入口，不传 invite_code。
- * 5. 登录成功：pickToken 抽出 token → setToken 写入本地 → globalData.isLoggedIn = true → 抛 close。
+ * 5. 登录成功：pickToken 抽出 token → userStore.loginSuccess（写本地 token + isLoggedIn）→ 抛 close。
  *    之后其它接口走 utils/request 会自动带 Authorization / token。拿不到 token 视为失败，弹窗不关。
  * 6. 点遮罩 / 面板外关闭 / 标题栏返回 / 登录成功 → close。
- *    页面把 visible 改回 false，并按 globalData 同步 isLoggedIn（收起 auth-bar）。
+ *    页面把 visible 改回 false；isLoggedIn 由 store 绑定自动更新（收起 auth-bar）。
  * 7. visible 变 false：observer 调 _resetForm，下次打开回到验证码登录、空表单、无倒计时。
  *    不要在 onTapClose 里提前清：页面改 visible 会再走一遍 observer。
  * 8. 发码 / 登录请求回来时若弹窗已关，不再 Toast、写 token、开倒计时。
@@ -36,7 +36,8 @@
  */
 import { sendSms, login } from "../../services/api";
 import { DEVICE_HEADERS } from "../../config/headers";
-import { pickToken, setToken } from "../../utils/auth";
+import { pickToken } from "../../utils/auth";
+import { userStore } from "../../stores/user";
 
 /** 发码成功后的冷却秒数；与文案「Ns」一致 */
 const SMS_COUNTDOWN_SECONDS = 60;
@@ -272,9 +273,8 @@ Component({
     },
 
     /**
-     * 从登录返回里抽出 token 写入本地（utils/auth.setToken）。
+     * 从登录返回里抽出 token，交给 userStore.loginSuccess 写本地并打登录态。
      * 兼容 token / access_token，以及顶层、data、user。
-     * 同时把 globalData.isLoggedIn 打成 true，首页 close 时才能收起 auth-bar。
      * 抽不出 token 返回 false，调用方当失败，避免「看起来已登录、后续接口没票」。
      */
     _persistSession(result) {
@@ -282,11 +282,7 @@ Component({
       if (!token) {
         return false;
       }
-      setToken(token);
-      const app = getApp();
-      if (app && app.globalData) {
-        app.globalData.isLoggedIn = true;
-      }
+      userStore.loginSuccess(token);
       return true;
     },
 

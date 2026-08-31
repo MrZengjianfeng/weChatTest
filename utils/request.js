@@ -5,7 +5,8 @@
  */
 import { BASE_URL } from "../config/env";
 import { DEVICE_HEADERS } from "../config/headers";
-import { clearToken, getToken, pickToken } from "./auth";
+import { getToken, pickToken } from "./auth";
+import { userStore } from "../stores/user";
 
 const TIMEOUT = 10000;
 const SUCCESS_CODE = 200;
@@ -26,11 +27,7 @@ function buildHeader(extra = {}) {
 }
 
 function handleAuthExpired() {
-  clearToken();
-  const app = getApp();
-  if (app && app.globalData) {
-    app.globalData.isLoggedIn = false;
-  }
+  userStore.logout();
 }
 
 /** token 若在信封层（body.token）而不在 data 里，合并进对象 payload，方便登录后落库 */

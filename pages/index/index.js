@@ -9,8 +9,7 @@
  *    - 轮播、分类来自 GET /api/v1/setting（carousels / game_labels）
  * 2. 分类高亮 activeCategoryId 交给 game-grid 的 game-label-id
  *    - 格子自己请求 GET /api/v1/games，页面不持有游戏列表
- * 3. onShow 每次可见都读 app.globalData.isLoggedIn
- *    - 从登录/注册返回时收起底部 auth-bar，且必须可重入
+ * 3. isLoggedIn 绑 userStore；登录成功 / 401 立刻反映到 auth-bar，不必等 onShow
  *
  * 模块与事件（WXML 编号对应）：
  * 1 notice-marquee   只展示 noticeText，无事件
@@ -21,7 +20,7 @@
  * 6 game-grid        select → { id } → onSelectGame
  *                    下拉刷新 / 上拉翻页由里层 scroll-view 转发 refresh / loadMore
  * 7 auth-bar         login → 打开 login-sheet；register → 注册页
- *   login-sheet      close → 收起弹窗并同步 isLoggedIn；密码 / 验证码 / 发码 / 登录在组件内
+ *   login-sheet      close → 收起弹窗；isLoggedIn 由 store 绑定更新
  *
  * 鉴权：轮播、快捷入口、游戏点击走 _guardAuth；未登录打开登录弹窗。
  * 搜索、分类切换不拦登录。
@@ -33,6 +32,8 @@
  */
 import { getHomeFeed } from "../../services/home";
 import { ROUTES } from "../../config/routes";
+import { createStoreBindings } from "mobx-miniprogram-bindings";
+import { userStore } from "../../stores/user";
 
 Page({
   data: {
@@ -44,11 +45,11 @@ Page({
      */
     isLoading: true,
     /**
-     * 与 app.globalData.isLoggedIn 对齐（onLaunch 按本地 token 初始化）。
+     * 来自 userStore.isLoggedIn（createStoreBindings）。
      * false：展示 auth-bar，home-body 加 home--unauth 给底栏留滚动空隙。
      * 真正鉴权以后端为准；这里只决定首页 UI。
      */
-    isLoggedIn: false,
+    isLoggedIn: userStore.isLoggedIn,
     /** 跑马灯全文，组件内循环滚动；空字符串时组件仍占位 */
     noticeText: "",
     /** 轮播项 { id, image, action }；id 目前是 service 里按索引生成的 banner-${index} */
@@ -80,6 +81,10 @@ Page({
   },
 
   onLoad() {
+    this.storeBindings = createStoreBindings(this, {
+      store: userStore,
+      fields: ["isLoggedIn"],
+    });
     this._updateGridMetrics();
     this._loadHome();
   },
@@ -92,12 +97,9 @@ Page({
     this._updateGridMetrics();
   },
 
-  onShow() {
-    // 登录成功写的是 globalData，首页可能一直没卸载，所以不能只靠 onLoad
-    const app = getApp();
-    const isLoggedIn = !!(app && app.globalData && app.globalData.isLoggedIn);
-    if (isLoggedIn !== this.data.isLoggedIn) {
-      this.setData({ isLoggedIn });
+  onUnload() {
+    if (this.storeBindings) {
+      this.storeBindings.destroyStoreBindings();
     }
   },
 
@@ -187,12 +189,7 @@ Page({
   },
 
   onCloseLogin() {
-    const app = getApp();
-    const isLoggedIn = !!(app && app.globalData && app.globalData.isLoggedIn);
-    this.setData({
-      isLoginVisible: false,
-      isLoggedIn,
-    });
+    this.setData({ isLoginVisible: false });
   },
 
   onTapRegister() {
@@ -283,7 +280,7 @@ Page({
    * 已登录返回 true；未登录打开登录弹窗并返回 false，调用方必须提前 return。
    */
   _guardAuth() {
-    if (this.data.isLoggedIn) return true;
+    if (userStore.isLoggedIn) return true;
     this.setData({ isLoginVisible: true });
     return false;
   },

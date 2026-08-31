@@ -137,6 +137,6 @@
 
 <!--
   登录底栏弹窗。宿主铺满 page（见 index.wxss），内部遮罩/面板才有参照。
-  close 收起弹窗；登录成功时组件会先写登录态再抛 close，本页同步 isLoggedIn。
+  close 只收起弹窗；登录成功由 userStore 更新 isLoggedIn，auth-bar 自动卸掉。
 -->
 <login-sheet visible="{{isLoginVisible}}" bind:close="onCloseLogin"></login-sheet>

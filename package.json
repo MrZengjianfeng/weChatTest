@@ -1,0 +1,21 @@
+{
+  "name": "wechatprojects",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Native WeChat miniprogram",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrZengjianfeng/weChatTest.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrZengjianfeng/weChatTest/issues"
+  },
+  "homepage": "https://github.com/MrZengjianfeng/weChatTest#readme",
+  "dependencies": {
+    "mobx-miniprogram": "^6.12.3",
+    "mobx-miniprogram-bindings": "^7.0.0"
+  }
+}
