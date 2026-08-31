@@ -1,0 +1,55 @@
+<!--
+  登录后底部 TabBar。宿主定位见 app.wxss 的 tab-bar 选择器。
+  白条四个入口：左 Home / Promo，右 Invite / Profile；中间 spacer 给凸出转盘留位。
+-->
+<view class="tab-bar">
+  <view class="tab-bar__bar">
+    <!-- 左侧：Home、Promo；高亮由 item.isActive 控制 -->
+    <view
+      class="tab-bar__item"
+      wx:for="{{leftItems}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bind:tap="onTapTab"
+    >
+      <image
+        class="tab-bar__icon"
+        src="{{item.isActive ? item.iconActive : item.icon}}"
+        mode="aspectFit"
+      />
+      <text class="tab-bar__label {{item.isActive ? 'tab-bar__label--active' : ''}}">{{item.label}}</text>
+    </view>
+    <!-- 中间空位，宽度对齐转盘，避免左右 Tab 和转盘挤在一起 -->
+    <view class="tab-bar__spacer"></view>
+    <!-- 右侧：Invite、Profile -->
+    <view
+      class="tab-bar__item"
+      wx:for="{{rightItems}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bind:tap="onTapTab"
+    >
+      <image
+        class="tab-bar__icon"
+        src="{{item.isActive ? item.iconActive : item.icon}}"
+        mode="aspectFit"
+      />
+      <text class="tab-bar__label {{item.isActive ? 'tab-bar__label--active' : ''}}">{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 中间转盘和 Invite / Profile 一样，reLaunch 到独立页；叠在白条上方并凸出 -->
+  <view class="tab-bar__wheel-wrap">
+    <view class="tab-bar__wheel" bind:tap="onTapWheel">
+      <image
+        class="tab-bar__wheel-img"
+        src="/assets/tabbar/turntable.jpg"
+        mode="aspectFit"
+      />
+      <!-- 稿上的时间样式，只是静态文案，不倒数、不接接口。蓝底必须画在 view 上，Skyline 的 text 不吃 background -->
+      <view class="tab-bar__countdown">
+        <text class="tab-bar__countdown-text">23:59:59</text>
+      </view>
+    </view>
+  </view>
+</view>

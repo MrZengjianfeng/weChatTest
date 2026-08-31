@@ -20,6 +20,7 @@
  * 6 game-grid        select → { id } → onSelectGame
  *                    下拉刷新 / 上拉翻页由里层 scroll-view 转发 refresh / loadMore
  * 7 auth-bar         login → 打开 login-sheet；register → 注册页
+ *   tab-bar          仅登录后；Promo / 转盘 / Invite / Profile 在组件内跳转
  *   login-sheet      close → 收起弹窗；isLoggedIn 由 store 绑定更新
  *
  * 鉴权：轮播、快捷入口、游戏点击走 _guardAuth；未登录打开登录弹窗。
@@ -47,6 +48,7 @@ Page({
     /**
      * 来自 userStore.isLoggedIn（createStoreBindings）。
      * false：展示 auth-bar，home-body 加 home--unauth 给底栏留滚动空隙。
+     * true：展示 tab-bar，home-body 加 home--tab 给凸出转盘留空。
      * 真正鉴权以后端为准；这里只决定首页 UI。
      */
     isLoggedIn: userStore.isLoggedIn,

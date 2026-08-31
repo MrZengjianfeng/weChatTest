@@ -4,6 +4,10 @@
  */
 export const ROUTES = {
   INDEX: "/pages/index/index",
+  PROMO: "/pages/promo/promo",
+  INVITE: "/pages/invite/invite",
+  PROFILE: "/pages/profile/profile",
+  LUCKY_WHEEL: "/pages/lucky-wheel/lucky-wheel",
   LOGIN: "/pages/login/login",
   REGISTER: "/pages/register/register",
   SEARCH: "/pages/search/search",

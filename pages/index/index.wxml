@@ -5,6 +5,7 @@
   - navigation-bar：自定义导航，深色底避开右侧胶囊，无返回键
   - notice-marquee：模块1，page 的 flex 子项，始终贴在导航下方
   - auth-bar：模块7，absolute 叠在 page 底部，未登录才渲染
+  - tab-bar：登录后底部 Tab（Home / Promo / 转盘 / Invite / Profile）
   - login-sheet：登录弹窗，absolute 铺满 page，点 Login 后打开
 
   【滚动层】
@@ -19,7 +20,8 @@
   5 category-tabs     分类胶囊，头部滚完后吸在跑马灯下方；受控 active-id；change → { id }
   6 game-grid         按 activeCategoryId 自己请求游戏；id 空则清空且不请求；select → { id }
 
-  未登录时 home-body 加 home--unauth，给底部登录条留出可滚空白，避免最后一行被挡住。
+  未登录时 home-body 加 home--unauth，给底部登录条留出可滚空白。
+  已登录加 home--tab，给凸出转盘的 TabBar 留空白。
 -->
 
 <!-- 自定义导航：title 空；color 品牌金，background 与胶囊区深色底一致 -->
@@ -37,7 +39,7 @@
 <!-- 骨架单独一条滚动，避免 nested 结构在空数据时闪一帧 -->
 <scroll-view wx:if="{{isLoading}}" class="scrollarea" scroll-y type="list">
   <!-- 骨架尺寸对齐真实模块：轮播 368rpx、搜索负边距悬浮、5 个入口、4 个胶囊、6 张卡 -->
-  <view class="home home-skeleton">
+    <view class="home home-skeleton {{isLoggedIn ? 'home--tab' : 'home--unauth'}}">
     <view class="home-skeleton__banner"></view>
     <view class="home-skeleton__search">
       <view class="home-skeleton__bone home-skeleton__search-icon"></view>
@@ -110,8 +112,8 @@
         bind:scrolltolower="onGridLoadMore"
         lower-threshold="{{120}}"
       >
-        <!-- 未登录加 home--unauth：padding-bottom 大约等于 auth-bar 高度 + 安全区 -->
-        <view class="home-body {{isLoggedIn ? '' : 'home--unauth'}}">
+        <!-- 未登录 home--unauth 给 auth-bar 留空；已登录 home--tab 给 TabBar 留空 -->
+        <view class="home-body {{isLoggedIn ? 'home--tab' : 'home--unauth'}}">
           <!--
             模块6：游戏三列格子。只传分类 id，列表/分页/骨架都在组件内。
             切换分类 = 改 activeCategoryId，observer 会重新请求。
@@ -136,7 +138,14 @@
 <auth-bar wx:if="{{!isLoggedIn}}" bind:login="onTapLogin" bind:register="onTapRegister"></auth-bar>
 
 <!--
+  登录后底部 Tab。宿主 absolute 见 app.wxss。
+  Home 高亮；Promo / 转盘 / Invite / Profile 由组件内跳转。
+  转盘上的 23:59:59 只是稿面文案，不是倒计时。
+-->
+<tab-bar wx:if="{{isLoggedIn}}" active="home"></tab-bar>
+
+<!--
   登录底栏弹窗。宿主铺满 page（见 index.wxss），内部遮罩/面板才有参照。
-  close 只收起弹窗；登录成功由 userStore 更新 isLoggedIn，auth-bar 自动卸掉。
+  close 只收起弹窗；登录成功由 userStore 更新 isLoggedIn，auth-bar 卸掉、tab-bar 挂上。
 -->
 <login-sheet visible="{{isLoginVisible}}" bind:close="onCloseLogin"></login-sheet>

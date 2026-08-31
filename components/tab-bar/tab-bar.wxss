@@ -1,0 +1,101 @@
+.tab-bar {
+  position: relative;
+  /* 给凸出的转盘留空；这块背景透明，内容可以从转盘两侧露出来 */
+  padding-top: 72rpx;
+}
+
+.tab-bar__bar {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  height: 100rpx;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #ffffff;
+  box-shadow: 0 -4rpx 16rpx rgba(11, 61, 46, 0.06);
+}
+
+.tab-bar__item {
+  flex: 1;
+  height: 100rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-bar__spacer {
+  width: 136rpx;
+  flex-shrink: 0;
+}
+
+.tab-bar__icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.tab-bar__label {
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  line-height: 1.2;
+  color: #9e9e9e;
+}
+
+.tab-bar__label--active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.tab-bar__wheel-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.tab-bar__wheel {
+  position: relative;
+  width: 136rpx;
+  height: 136rpx;
+  /* 竖向 flex + align center：倒计时 view 按文字宽度收缩，避免蓝底拉满转盘 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: auto;
+}
+
+.tab-bar__wheel-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 136rpx;
+  height: 136rpx;
+  border-radius: 68rpx;
+}
+
+/* 转盘底部时间条：静态文案，不是真倒计时。蓝底画在 view 上，宽度跟文字走 */
+.tab-bar__countdown {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 16rpx;
+  height: 28rpx;
+  padding: 0 8rpx;
+  border-radius: 8rpx;
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-bar__countdown-text {
+  color: #ffffff;
+  font-size: 18rpx;
+  font-weight: 700;
+  line-height: 1;
+}

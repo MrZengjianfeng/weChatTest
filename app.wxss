@@ -10,9 +10,24 @@ page {
   --color-border: #d4e8d8;
   --font-size-title: 32rpx;
   --font-size-body: 28rpx;
+  /* 白条 ~100rpx + 转盘凸出 ~72rpx + 安全区；列表底部用这个避开 TabBar */
+  --tab-bar-content-padding: calc(220rpx + env(safe-area-inset-bottom));
 }
 
 page {
   background: var(--color-bg);
   color: var(--color-text);
+}
+
+/*
+  组件 styleIsolation: isolated，只能定位宿主。
+  登录后 TabBar 叠在 page 底部，不占 flex 高度。
+*/
+tab-bar {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
 }

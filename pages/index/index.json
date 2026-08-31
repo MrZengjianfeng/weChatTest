@@ -8,6 +8,7 @@
     "category-tabs": "/components/category-tabs/category-tabs",
     "game-grid": "/components/game-grid/game-grid",
     "auth-bar": "/components/auth-bar/auth-bar",
+    "tab-bar": "/components/tab-bar/tab-bar",
     "login-sheet": "/components/login-sheet/login-sheet"
   },
   "navigationBarTextStyle": "white"

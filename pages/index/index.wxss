@@ -29,6 +29,11 @@ page {
   padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
+/* 已登录：避开 TabBar 白条和中间凸出的转盘 */
+.home--tab {
+  padding-bottom: var(--tab-bar-content-padding);
+}
+
 /*
   nested-scroll-body 唯一子节点：高度等于 .scrollarea。
   分类条在顶部，下面 game-grid 用剩余 px 高度自己滚。

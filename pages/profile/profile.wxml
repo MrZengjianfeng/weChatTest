@@ -1,0 +1,8 @@
+<!-- 个人中心占位页：登录后 TabBar Profile -->
+<navigation-bar title="{{title}}" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container container--tab">
+    <text class="hint">个人中心将在后续接入</text>
+  </view>
+</scroll-view>
+<tab-bar active="profile"></tab-bar>

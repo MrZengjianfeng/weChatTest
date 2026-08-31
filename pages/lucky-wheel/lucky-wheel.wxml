@@ -1,0 +1,8 @@
+<!-- 转盘占位页：登录后 TabBar 中间转盘，切页方式和 Invite / Profile 相同 -->
+<navigation-bar title="{{title}}" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container container--tab">
+    <text class="hint">转盘活动将在后续接入</text>
+  </view>
+</scroll-view>
+<tab-bar active="wheel"></tab-bar>

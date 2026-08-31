@@ -1,0 +1,8 @@
+<!-- 活动占位页：登录后 TabBar Promo -->
+<navigation-bar title="{{title}}" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container container--tab">
+    <text class="hint">活动页将在后续接入</text>
+  </view>
+</scroll-view>
+<tab-bar active="promo"></tab-bar>

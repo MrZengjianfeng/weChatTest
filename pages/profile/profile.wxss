@@ -1,0 +1,28 @@
+page {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.container {
+  padding: 80rpx 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container--tab {
+  padding-bottom: var(--tab-bar-content-padding);
+}
+
+.hint {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+}
